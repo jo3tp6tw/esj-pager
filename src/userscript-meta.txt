@@ -1,8 +1,11 @@
 // ==UserScript==
 // @name         ESJ Zone 翻頁閱讀
-// @namespace    esj-pager
-// @version      0.1.0
-// @description  將 ESJ Zone 閱讀改為翻頁模式（開發中）
+// @namespace    https://github.com/jo3tp6tw/esj-pager
+// @version      0.1.1
+// @description  將 ESJ Zone 閱讀改為翻頁模式
+// @author       jo3tp6tw
+// @homepageURL  https://github.com/jo3tp6tw/esj-pager
+// @supportURL   https://github.com/jo3tp6tw/esj-pager/issues
 // @match        https://www.esjzone.cc/forum/*
 // @match        https://www.esjzone.cc/detail/*
 // @match        https://www.esjzone.one/forum/*
