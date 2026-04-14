@@ -1,0 +1,26 @@
+---
+description: Lucide icons — named imports only; avoid full-library bundle
+globs: src/**/*.ts
+alwaysApply: false
+---
+
+# Lucide（`lucide`）
+
+esbuild 會對 ESM 做 tree-shaking；**只有具名 import 用到的圖示**才會進 bundle。下列寫法會把大量或全部圖示打進去，**禁止**。
+
+## 必須
+
+- 從 `lucide` **具名 import** 每個用到的圖示（與 `createElement` 若需要）。
+- 新圖示優先加在 `src/lucideIcons.ts`，再 export 小函式給 `main.ts` 等處使用，維持單一匯入點。
+
+```typescript
+import { createElement, Menu, MoveLeft } from 'lucide';
+```
+
+## 禁止
+
+- `import * as lucide from 'lucide'` 或從根再轉發整包。
+- `import { icons } from 'lucide'`（`icons` 物件會牽連大量模組）。
+- 任何「依字串動態載入整本圖示表」卻未侷限在明確白名單（靜態 map）的作法。
+
+若未來需要依名稱選圖，請維護**只含會用到的圖示**的靜態 map（每個 value 仍是具名 import 的 `IconNode`），不要用全圖示索引。

@@ -1,0 +1,14 @@
+// ==UserScript==
+// @name         ESJ Zone 翻頁閱讀
+// @namespace    esj-pager
+// @version      0.1.0
+// @description  將 ESJ Zone 閱讀改為翻頁模式（開發中）
+// @match        https://www.esjzone.cc/forum/*
+// @match        https://www.esjzone.cc/detail/*
+// @match        https://www.esjzone.one/forum/*
+// @match        https://www.esjzone.one/detail/*
+// @match        https://www.esjzone.me/forum/*
+// @match        https://www.esjzone.me/detail/*
+// @grant        none
+// @license      MIT
+// ==/UserScript==

@@ -1,0 +1,18 @@
+{
+  "name": "esj-pager",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ESJ Zone paginated reading userscript",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "lucide": "^1.8.0"
+  }
+}
