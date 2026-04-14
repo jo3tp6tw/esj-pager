@@ -28,9 +28,15 @@ export function getAdjacentChapterHrefs(): { prev: string; next: string } {
   return { prev, next };
 }
 
+/** 從 URL 取出小說 ID（/forum/{novelId}/{chapterId}）。 */
+export function getNovelId(): string {
+  const m = window.location.pathname.match(/\/forum\/(\d+)\//);
+  return m?.[1] ?? '';
+}
+
 /** 章節目錄／作品詳情（/forum/{id}/ → /detail/{id}）。 */
 export function getNovelDetailHref(): string {
-  const m = window.location.pathname.match(/\/forum\/(\d+)\//);
-  if (!m) return '';
-  return `${window.location.origin}/detail/${m[1]}`;
+  const id = getNovelId();
+  if (!id) return '';
+  return `${window.location.origin}/detail/${id}`;
 }

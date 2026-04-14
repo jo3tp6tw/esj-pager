@@ -310,10 +310,14 @@
     const next = links.find((a) => a.textContent?.includes("\u4E0B\u4E00\u7BC7"))?.href ?? "";
     return { prev, next };
   }
-  function getNovelDetailHref() {
+  function getNovelId() {
     const m = window.location.pathname.match(/\/forum\/(\d+)\//);
-    if (!m) return "";
-    return `${window.location.origin}/detail/${m[1]}`;
+    return m?.[1] ?? "";
+  }
+  function getNovelDetailHref() {
+    const id = getNovelId();
+    if (!id) return "";
+    return `${window.location.origin}/detail/${id}`;
   }
 
   // node_modules/lucide/dist/esm/defaultAttributes.js
@@ -2073,7 +2077,8 @@
 
   // src/main.ts
   var READER_PROFILE_STORAGE_KEY = "esj-pager:reader-profile:v1";
-  var READER_LAST_PAGE_STORAGE_KEY = "esj-pager:last-page:v1";
+  var READER_LAST_PAGE_STORAGE_KEY = "esj-pager:last-page:v2";
+  var READER_LAST_PAGE_MAX_NOVELS = 10;
   var READER_FULLSCREEN_RESTORE_KEY = "esj-pager:restore-fullscreen-once:v1";
   var READER_WEB_FONT_STORAGE_KEY = "esj-pager:web-font:v1";
   var LOCAL_FONT_OPTIONS = [
@@ -2240,7 +2245,8 @@
     let removeSingleEmptyParagraph = false;
     let pagedBlocks = blocks;
     const currentReaderSettings = { ...readerSettings };
-    const chapterPageStorageKey = `${window.location.pathname}${window.location.search}`;
+    const novelId = getNovelId();
+    const chapterKey = `${window.location.pathname}${window.location.search}`;
     let pendingRestorePageIndex = null;
     let lastSavedPageIndex = -1;
     const readerLimits = {
@@ -2632,26 +2638,38 @@
         return false;
       }
     }
-    function loadSavedPageIndex() {
+    function loadLastPageEntries() {
       try {
         const raw = window.localStorage.getItem(READER_LAST_PAGE_STORAGE_KEY);
-        if (!raw) return;
+        if (!raw) return [];
         const parsed = JSON.parse(raw);
-        const savedPage = parsed[chapterPageStorageKey];
-        if (!Number.isFinite(savedPage)) return;
-        const nextIndex = Math.max(0, Math.floor(savedPage) - 1);
-        pendingRestorePageIndex = nextIndex;
+        return Array.isArray(parsed) ? parsed : [];
       } catch {
+        return [];
       }
     }
+    function loadSavedPageIndex() {
+      if (!novelId) return;
+      const entries = loadLastPageEntries();
+      const entry = entries.find((e) => e.novelId === novelId);
+      if (!entry) return;
+      if (entry.chapter !== chapterKey) return;
+      if (!Number.isFinite(entry.page)) return;
+      pendingRestorePageIndex = Math.max(0, Math.floor(entry.page) - 1);
+    }
     function saveCurrentPageIndex() {
+      if (!novelId) return;
       if (pageStarts.length === 0) return;
       if (pageIndex === lastSavedPageIndex) return;
       try {
-        const raw = window.localStorage.getItem(READER_LAST_PAGE_STORAGE_KEY);
-        const parsed = raw ? JSON.parse(raw) : {};
-        parsed[chapterPageStorageKey] = pageIndex + 1;
-        window.localStorage.setItem(READER_LAST_PAGE_STORAGE_KEY, JSON.stringify(parsed));
+        let entries = loadLastPageEntries();
+        entries = entries.filter((e) => e.novelId !== novelId);
+        entries.push({ novelId, chapter: chapterKey, page: pageIndex + 1, ts: Date.now() });
+        if (entries.length > READER_LAST_PAGE_MAX_NOVELS) {
+          entries.sort((a, b) => a.ts - b.ts);
+          entries = entries.slice(entries.length - READER_LAST_PAGE_MAX_NOVELS);
+        }
+        window.localStorage.setItem(READER_LAST_PAGE_STORAGE_KEY, JSON.stringify(entries));
         lastSavedPageIndex = pageIndex;
       } catch {
       }
@@ -2986,17 +3004,17 @@
       if (Math.abs(dx) <= Math.abs(dy)) return;
       suppressNextSideTap = true;
       if (dx < 0) {
-        if (pageIndex <= 0) {
-          confirmGoPrevChapter();
+        if (pageIndex >= pageStarts.length - 1) {
+          confirmGoNextChapter();
         } else {
-          goPrevPage();
+          goNextPage();
         }
         return;
       }
-      if (pageIndex >= pageStarts.length - 1) {
-        confirmGoNextChapter();
+      if (pageIndex <= 0) {
+        confirmGoPrevChapter();
       } else {
-        goNextPage();
+        goPrevPage();
       }
     }
     function handleCanvasTapWheel(e) {

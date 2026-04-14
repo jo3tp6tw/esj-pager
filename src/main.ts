@@ -6,6 +6,7 @@ import {
   getCommentsRoot,
   getForumContent,
   getNovelDetailHref,
+  getNovelId,
 } from './site';
 import type { Block } from './types';
 import { createReaderDom } from './reader/dom';
@@ -29,7 +30,9 @@ type ImageCacheEntry = {
   naturalHeight: number;
 };
 const READER_PROFILE_STORAGE_KEY = 'esj-pager:reader-profile:v1';
-const READER_LAST_PAGE_STORAGE_KEY = 'esj-pager:last-page:v1';
+const READER_LAST_PAGE_STORAGE_KEY = 'esj-pager:last-page:v2';
+const READER_LAST_PAGE_MAX_NOVELS = 10;
+type LastPageEntry = { novelId: string; chapter: string; page: number; ts: number };
 const READER_FULLSCREEN_RESTORE_KEY = 'esj-pager:restore-fullscreen-once:v1';
 const READER_WEB_FONT_STORAGE_KEY = 'esj-pager:web-font:v1';
 type ReaderProfile = Pick<
@@ -219,7 +222,8 @@ function mountReader(
   let removeSingleEmptyParagraph = false;
   let pagedBlocks: Block[] = blocks;
   const currentReaderSettings: ReaderSettings = { ...readerSettings };
-  const chapterPageStorageKey = `${window.location.pathname}${window.location.search}`;
+  const novelId = getNovelId();
+  const chapterKey = `${window.location.pathname}${window.location.search}`;
   let pendingRestorePageIndex: number | null = null;
   let lastSavedPageIndex = -1;
 
@@ -659,28 +663,40 @@ function mountReader(
     }
   }
 
-  function loadSavedPageIndex(): void {
+  function loadLastPageEntries(): LastPageEntry[] {
     try {
       const raw = window.localStorage.getItem(READER_LAST_PAGE_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as Record<string, unknown>;
-      const savedPage = parsed[chapterPageStorageKey];
-      if (!Number.isFinite(savedPage)) return;
-      const nextIndex = Math.max(0, Math.floor(savedPage as number) - 1);
-      pendingRestorePageIndex = nextIndex;
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      // Ignore bad storage content and continue with first page.
+      return [];
     }
   }
 
+  function loadSavedPageIndex(): void {
+    if (!novelId) return;
+    const entries = loadLastPageEntries();
+    const entry = entries.find((e) => e.novelId === novelId);
+    if (!entry) return;
+    if (entry.chapter !== chapterKey) return;
+    if (!Number.isFinite(entry.page)) return;
+    pendingRestorePageIndex = Math.max(0, Math.floor(entry.page) - 1);
+  }
+
   function saveCurrentPageIndex(): void {
+    if (!novelId) return;
     if (pageStarts.length === 0) return;
     if (pageIndex === lastSavedPageIndex) return;
     try {
-      const raw = window.localStorage.getItem(READER_LAST_PAGE_STORAGE_KEY);
-      const parsed = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
-      parsed[chapterPageStorageKey] = pageIndex + 1;
-      window.localStorage.setItem(READER_LAST_PAGE_STORAGE_KEY, JSON.stringify(parsed));
+      let entries = loadLastPageEntries();
+      entries = entries.filter((e) => e.novelId !== novelId);
+      entries.push({ novelId, chapter: chapterKey, page: pageIndex + 1, ts: Date.now() });
+      if (entries.length > READER_LAST_PAGE_MAX_NOVELS) {
+        entries.sort((a, b) => a.ts - b.ts);
+        entries = entries.slice(entries.length - READER_LAST_PAGE_MAX_NOVELS);
+      }
+      window.localStorage.setItem(READER_LAST_PAGE_STORAGE_KEY, JSON.stringify(entries));
       lastSavedPageIndex = pageIndex;
     } catch {
       // Ignore storage failures silently.
@@ -1067,17 +1083,17 @@ function mountReader(
 
     suppressNextSideTap = true;
     if (dx < 0) {
-      if (pageIndex <= 0) {
-        confirmGoPrevChapter();
+      if (pageIndex >= pageStarts.length - 1) {
+        confirmGoNextChapter();
       } else {
-        goPrevPage();
+        goNextPage();
       }
       return;
     }
-    if (pageIndex >= pageStarts.length - 1) {
-      confirmGoNextChapter();
+    if (pageIndex <= 0) {
+      confirmGoPrevChapter();
     } else {
-      goNextPage();
+      goPrevPage();
     }
   }
 
