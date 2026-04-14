@@ -3,7 +3,9 @@
   fontSize: number;
   lineHeight: number;
   paragraphSpacing: number;
-  pagePadding: number;
+  pagePaddingX: number;
+  pagePaddingY: number;
+  pageMaxWidth: number;
 };
 
 export type ChromeSettings = {
@@ -35,7 +37,9 @@ export const readerSettings: ReaderSettings = {
   fontSize: 26,
   lineHeight: 1.8,
   paragraphSpacing: 18,
-  pagePadding: 24,
+  pagePaddingX: 24,
+  pagePaddingY: 24,
+  pageMaxWidth: 880,
 };
 
 export const chromeSettingsMobile: ChromeSettings = {

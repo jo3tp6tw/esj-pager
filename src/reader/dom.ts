@@ -1,7 +1,10 @@
 ﻿import {
-  iconAArrowDown,
-  iconAArrowUp,
+  iconArrowDownToLine,
+  iconChevronDown,
+  iconChevronUp,
+  iconClipboardPaste,
   iconDiff,
+  iconExpand,
   iconFontSize,
   iconMenu,
   iconMinus,
@@ -11,9 +14,9 @@
   iconPlus,
   iconPrevChapter,
   iconPrevPage,
-  iconSquare,
-  iconSquareCheck,
+  iconCheck,
   iconTableOfContents,
+  iconShrink,
 } from '../lucideIcons';
 
 export type ReaderDomRefs = {
@@ -22,7 +25,9 @@ export type ReaderDomRefs = {
   header: HTMLDivElement;
   btnHeaderMenu: HTMLButtonElement;
   iconHeaderMenu: SVGElement;
-  headerPageLabel: HTMLSpanElement;
+  btnHeaderFullscreen: HTMLButtonElement;
+  iconHeaderFullscreenExpand: SVGElement;
+  iconHeaderFullscreenShrink: SVGElement;
   drawerOverlay: HTMLDivElement;
   drawerBackdrop: HTMLDivElement;
   iconTocEl: SVGElement | null;
@@ -48,18 +53,65 @@ export type ReaderDomRefs = {
   readerSettingFontValue: HTMLSpanElement;
   readerSettingLineHeightValue: HTMLSpanElement;
   readerSettingParaSpacingValue: HTMLSpanElement;
-  readerSettingPagePaddingValue: HTMLSpanElement;
-  btnReaderFontDec: HTMLButtonElement;
-  btnReaderFontInc: HTMLButtonElement;
-  btnReaderLineHeightDec: HTMLButtonElement;
-  btnReaderLineHeightInc: HTMLButtonElement;
-  btnReaderParaSpacingDec: HTMLButtonElement;
-  btnReaderParaSpacingInc: HTMLButtonElement;
-  btnReaderPagePaddingDec: HTMLButtonElement;
-  btnReaderPagePaddingInc: HTMLButtonElement;
-  btnRemoveSingleEmptyParagraph: HTMLButtonElement;
-  iconRemoveSingleEmptyOffEl: SVGElement;
-  iconRemoveSingleEmptyOnEl: SVGElement;
+  readerSettingPagePaddingXValue: HTMLSpanElement;
+  readerSettingPagePaddingYValue: HTMLSpanElement;
+  readerSettingPageMaxWidthValue: HTMLSpanElement;
+  btnReaderSettingsAdjust: HTMLButtonElement;
+  btnReaderSettingsDropdown: HTMLButtonElement;
+  iconReaderSettingsChevronDownEl: SVGElement;
+  iconReaderSettingsChevronUpEl: SVGElement;
+  readerSettingsContent: HTMLDivElement;
+  btnProfileSave: HTMLButtonElement;
+  btnProfileRestore: HTMLButtonElement;
+  btnProfileDropdown: HTMLButtonElement;
+  iconProfileChevronDownEl: SVGElement;
+  iconProfileChevronUpEl: SVGElement;
+  profileContent: HTMLDivElement;
+  profileFontValue: HTMLSpanElement;
+  profileLineHeightValue: HTMLSpanElement;
+  profileParaSpacingValue: HTMLSpanElement;
+  profilePagePaddingXValue: HTMLSpanElement;
+  profilePagePaddingYValue: HTMLSpanElement;
+  profilePageMaxWidthValue: HTMLSpanElement;
+  profileRemoveSingleEmptyValue: HTMLSpanElement;
+  selectFontSource: HTMLSelectElement;
+  fontLocalRow: HTMLDivElement;
+  selectLocalFont: HTMLSelectElement;
+  fontWebControls: HTMLDivElement;
+  inputWebFontCssUrl: HTMLInputElement;
+  inputWebFontFamily: HTMLInputElement;
+  btnApplyWebFont: HTMLButtonElement;
+  readerRemoveSingleEmptyValue: HTMLSpanElement;
+  readerAdjustOverlay: HTMLDivElement;
+  readerAdjustBackdrop: HTMLDivElement;
+  readerAdjustPanel: HTMLDivElement;
+  readerAdjustFontValue: HTMLSpanElement;
+  btnReaderAdjustFontDec: HTMLButtonElement;
+  rangeReaderAdjustFont: HTMLInputElement;
+  btnReaderAdjustFontInc: HTMLButtonElement;
+  readerAdjustLineHeightValue: HTMLSpanElement;
+  btnReaderAdjustLineHeightDec: HTMLButtonElement;
+  rangeReaderAdjustLineHeight: HTMLInputElement;
+  btnReaderAdjustLineHeightInc: HTMLButtonElement;
+  readerAdjustParaSpacingValue: HTMLSpanElement;
+  btnReaderAdjustParaSpacingDec: HTMLButtonElement;
+  rangeReaderAdjustParaSpacing: HTMLInputElement;
+  btnReaderAdjustParaSpacingInc: HTMLButtonElement;
+  readerAdjustPagePaddingXValue: HTMLSpanElement;
+  btnReaderAdjustPagePaddingXDec: HTMLButtonElement;
+  rangeReaderAdjustPagePaddingX: HTMLInputElement;
+  btnReaderAdjustPagePaddingXInc: HTMLButtonElement;
+  readerAdjustPagePaddingYValue: HTMLSpanElement;
+  btnReaderAdjustPagePaddingYDec: HTMLButtonElement;
+  rangeReaderAdjustPagePaddingY: HTMLInputElement;
+  btnReaderAdjustPagePaddingYInc: HTMLButtonElement;
+  readerAdjustPageMaxWidthValue: HTMLSpanElement;
+  btnReaderAdjustPageMaxWidthDec: HTMLButtonElement;
+  rangeReaderAdjustPageMaxWidth: HTMLInputElement;
+  btnReaderAdjustPageMaxWidthInc: HTMLButtonElement;
+  btnReaderAdjustRemoveSingleEmpty: HTMLButtonElement;
+  btnReaderAdjustApply: HTMLButtonElement;
+  iconReaderAdjustRemoveSingleEmptyCheckEl: SVGElement;
   pageJumpOverlay: HTMLDivElement;
   pageJumpBackdrop: HTMLDivElement;
   pageJumpPanel: HTMLDivElement;
@@ -96,16 +148,21 @@ export function createReaderDom(
   headerTitle.id = 'esj-reader-header-title';
   headerTitle.textContent = title;
 
-  const headerPage = document.createElement('div');
-  headerPage.id = 'esj-reader-header-page';
-  const headerPageLabel = document.createElement('span');
-  headerPageLabel.id = 'esj-header-page-label';
-  headerPageLabel.textContent = '1 / 1';
-  headerPage.appendChild(headerPageLabel);
+  const btnHeaderFullscreen = document.createElement('button');
+  btnHeaderFullscreen.type = 'button';
+  btnHeaderFullscreen.className = 'esj-header-menu-btn';
+  btnHeaderFullscreen.id = 'esj-header-fullscreen-btn';
+  btnHeaderFullscreen.setAttribute('aria-label', '進入全螢幕');
+  btnHeaderFullscreen.setAttribute('aria-pressed', 'false');
+  const iconHeaderFullscreenExpand = iconExpand();
+  const iconHeaderFullscreenShrink = iconShrink();
+  iconHeaderFullscreenShrink.style.display = 'none';
+  btnHeaderFullscreen.appendChild(iconHeaderFullscreenExpand);
+  btnHeaderFullscreen.appendChild(iconHeaderFullscreenShrink);
 
   header.appendChild(btnHeaderMenu);
   header.appendChild(headerTitle);
-  header.appendChild(headerPage);
+  header.appendChild(btnHeaderFullscreen);
 
   const drawerOverlay = document.createElement('div');
   drawerOverlay.id = 'esj-reader-drawer';
@@ -131,6 +188,10 @@ export function createReaderDom(
     tocLinkDrawer.setAttribute('aria-label', '章節目錄');
     iconTocEl = iconTableOfContents();
     tocLinkDrawer.appendChild(iconTocEl);
+    const tocText = document.createElement('span');
+    tocText.className = 'esj-drawer-toc-text';
+    tocText.textContent = '目錄';
+    tocLinkDrawer.appendChild(tocText);
     drawerNav.appendChild(tocLinkDrawer);
     drawerPanel.appendChild(drawerNav);
   }
@@ -139,24 +200,40 @@ export function createReaderDom(
   readerSettingsSection.className = 'esj-drawer-reader-settings';
   readerSettingsSection.setAttribute('aria-label', '閱讀設定');
 
+  const readerSettingsHead = document.createElement('div');
+  readerSettingsHead.className = 'esj-drawer-reader-settings-head';
   const readerSettingsTitle = document.createElement('div');
   readerSettingsTitle.className = 'esj-drawer-reader-settings-title';
   readerSettingsTitle.textContent = '閱讀設定';
-  readerSettingsSection.appendChild(readerSettingsTitle);
+  const btnReaderSettingsAdjust = document.createElement('button');
+  btnReaderSettingsAdjust.type = 'button';
+  btnReaderSettingsAdjust.className = 'esj-setting-btn';
+  btnReaderSettingsAdjust.setAttribute('aria-label', '調整閱讀設定');
+  btnReaderSettingsAdjust.appendChild(iconPenLine(18));
+  const btnReaderSettingsDropdown = document.createElement('button');
+  btnReaderSettingsDropdown.type = 'button';
+  btnReaderSettingsDropdown.className = 'esj-setting-btn';
+  btnReaderSettingsDropdown.setAttribute('aria-label', '展開或收合閱讀設定');
+  btnReaderSettingsDropdown.setAttribute('aria-expanded', 'false');
+  const iconReaderSettingsChevronDownEl = iconChevronDown(18);
+  const iconReaderSettingsChevronUpEl = iconChevronUp(18);
+  iconReaderSettingsChevronUpEl.style.display = 'none';
+  btnReaderSettingsDropdown.appendChild(iconReaderSettingsChevronDownEl);
+  btnReaderSettingsDropdown.appendChild(iconReaderSettingsChevronUpEl);
+  readerSettingsHead.appendChild(readerSettingsTitle);
+  readerSettingsHead.appendChild(btnReaderSettingsDropdown);
+  readerSettingsSection.appendChild(readerSettingsHead);
+  const readerSettingsActions = document.createElement('div');
+  readerSettingsActions.className = 'esj-drawer-settings-actions';
+  readerSettingsActions.appendChild(btnReaderSettingsAdjust);
+  readerSettingsSection.appendChild(readerSettingsActions);
+  const readerSettingsContent = document.createElement('div');
+  readerSettingsContent.className = 'esj-drawer-settings-content';
 
   function makeSettingRow(
     labelText: string,
     iconLeft: SVGElement,
-    decIcon: SVGElement,
-    incIcon: SVGElement,
-    decAriaLabel: string,
-    incAriaLabel: string,
-  ): {
-    row: HTMLDivElement;
-    valueEl: HTMLSpanElement;
-    decBtn: HTMLButtonElement;
-    incBtn: HTMLButtonElement;
-  } {
+  ): { row: HTMLDivElement; valueEl: HTMLSpanElement } {
     const row = document.createElement('div');
     row.className = 'esj-setting-row';
 
@@ -167,76 +244,52 @@ export function createReaderDom(
     labelTextEl.textContent = labelText;
     labelWrap.appendChild(labelTextEl);
 
-    const controls = document.createElement('div');
-    controls.className = 'esj-setting-controls';
-
-    const decBtn = document.createElement('button');
-    decBtn.type = 'button';
-    decBtn.className = 'esj-setting-btn';
-    decBtn.setAttribute('aria-label', decAriaLabel);
-    decBtn.appendChild(decIcon);
-
     const valueEl = document.createElement('span');
     valueEl.className = 'esj-setting-value';
     valueEl.textContent = '-';
 
-    const incBtn = document.createElement('button');
-    incBtn.type = 'button';
-    incBtn.className = 'esj-setting-btn';
-    incBtn.setAttribute('aria-label', incAriaLabel);
-    incBtn.appendChild(incIcon);
-
-    controls.appendChild(decBtn);
+    const controls = document.createElement('div');
+    controls.className = 'esj-setting-controls';
     controls.appendChild(valueEl);
-    controls.appendChild(incBtn);
     row.appendChild(labelWrap);
     row.appendChild(controls);
-    return { row, valueEl, decBtn, incBtn };
+    return { row, valueEl };
   }
 
   const fontRow = makeSettingRow(
     '字級',
     iconFontSize(18),
-    iconAArrowDown(18),
-    iconAArrowUp(18),
-    '字級變小',
-    '字級變大',
   );
   const lineHeightRow = makeSettingRow(
     '行高',
     iconDiff(18),
-    iconMinus(18),
-    iconPlus(18),
-    '行高減少',
-    '行高增加',
   );
   const paraSpacingRow = makeSettingRow(
     '段距',
     iconDiff(18),
-    iconMinus(18),
-    iconPlus(18),
-    '段距減少',
-    '段距增加',
   );
   const pagePaddingRow = makeSettingRow(
-    '頁邊距',
+    '左右邊距',
     iconDiff(18),
-    iconMinus(18),
-    iconPlus(18),
-    '頁邊距減少',
-    '頁邊距增加',
+  );
+  const pagePaddingYRow = makeSettingRow(
+    '上下邊距',
+    iconDiff(18),
+  );
+  const pageMaxWidthRow = makeSettingRow(
+    '最大寬度',
+    iconDiff(18),
   );
 
-  readerSettingsSection.appendChild(fontRow.row);
-  readerSettingsSection.appendChild(lineHeightRow.row);
-  readerSettingsSection.appendChild(paraSpacingRow.row);
-  readerSettingsSection.appendChild(pagePaddingRow.row);
+  readerSettingsContent.appendChild(fontRow.row);
+  readerSettingsContent.appendChild(lineHeightRow.row);
+  readerSettingsContent.appendChild(paraSpacingRow.row);
+  readerSettingsContent.appendChild(pagePaddingRow.row);
+  readerSettingsContent.appendChild(pagePaddingYRow.row);
+  readerSettingsContent.appendChild(pageMaxWidthRow.row);
 
-  const removeSingleEmptyRow = document.createElement('button');
-  removeSingleEmptyRow.type = 'button';
+  const removeSingleEmptyRow = document.createElement('div');
   removeSingleEmptyRow.className = 'esj-setting-toggle-row';
-  removeSingleEmptyRow.setAttribute('aria-label', '去除空段落');
-  removeSingleEmptyRow.setAttribute('aria-pressed', 'false');
 
   const removeSingleEmptyLabel = document.createElement('div');
   removeSingleEmptyLabel.className = 'esj-setting-label';
@@ -244,17 +297,191 @@ export function createReaderDom(
   removeSingleEmptyLabelText.textContent = '去除空段落';
   removeSingleEmptyLabel.appendChild(removeSingleEmptyLabelText);
 
-  const removeSingleEmptyIconWrap = document.createElement('span');
-  removeSingleEmptyIconWrap.className = 'esj-setting-toggle-icon';
-  const iconRemoveSingleEmptyOffEl = iconSquare(18);
-  const iconRemoveSingleEmptyOnEl = iconSquareCheck(18);
-  iconRemoveSingleEmptyOnEl.style.display = 'none';
-  removeSingleEmptyIconWrap.appendChild(iconRemoveSingleEmptyOffEl);
-  removeSingleEmptyIconWrap.appendChild(iconRemoveSingleEmptyOnEl);
+  const readerRemoveSingleEmptyValue = document.createElement('span');
+  readerRemoveSingleEmptyValue.className = 'esj-setting-value esj-setting-onoff';
+  readerRemoveSingleEmptyValue.textContent = 'OFF';
 
   removeSingleEmptyRow.appendChild(removeSingleEmptyLabel);
-  removeSingleEmptyRow.appendChild(removeSingleEmptyIconWrap);
-  readerSettingsSection.appendChild(removeSingleEmptyRow);
+  removeSingleEmptyRow.appendChild(readerRemoveSingleEmptyValue);
+  readerSettingsContent.appendChild(removeSingleEmptyRow);
+  readerSettingsSection.appendChild(readerSettingsContent);
+
+  const profileSection = document.createElement('section');
+  profileSection.className = 'esj-drawer-profile-section';
+  profileSection.setAttribute('aria-label', '設定檔');
+
+  const profileHeader = document.createElement('div');
+  profileHeader.className = 'esj-drawer-profile-header';
+  const profileTitle = document.createElement('div');
+  profileTitle.className = 'esj-drawer-reader-settings-title';
+  profileTitle.textContent = '設定檔';
+  const profileHeaderActions = document.createElement('div');
+  profileHeaderActions.className = 'esj-drawer-profile-header-actions';
+  const btnProfileDropdown = document.createElement('button');
+  btnProfileDropdown.type = 'button';
+  btnProfileDropdown.className = 'esj-setting-btn';
+  btnProfileDropdown.setAttribute('aria-label', '展開或收合設定檔參數');
+  btnProfileDropdown.setAttribute('aria-expanded', 'false');
+  const iconProfileChevronDownEl = iconChevronDown(18);
+  const iconProfileChevronUpEl = iconChevronUp(18);
+  iconProfileChevronUpEl.style.display = 'none';
+  btnProfileDropdown.appendChild(iconProfileChevronDownEl);
+  btnProfileDropdown.appendChild(iconProfileChevronUpEl);
+  profileHeaderActions.appendChild(btnProfileDropdown);
+  profileHeader.appendChild(profileTitle);
+  profileHeader.appendChild(profileHeaderActions);
+
+  const profileActions = document.createElement('div');
+  profileActions.className = 'esj-drawer-profile-actions';
+
+  const btnProfileSave = document.createElement('button');
+  btnProfileSave.type = 'button';
+  btnProfileSave.className = 'esj-setting-btn';
+  btnProfileSave.setAttribute('aria-label', '儲存參數設定檔');
+  btnProfileSave.appendChild(iconArrowDownToLine(18));
+
+  const btnProfileRestore = document.createElement('button');
+  btnProfileRestore.type = 'button';
+  btnProfileRestore.className = 'esj-setting-btn';
+  btnProfileRestore.setAttribute('aria-label', '還原參數設定檔');
+  btnProfileRestore.appendChild(iconClipboardPaste(18));
+
+  profileActions.appendChild(btnProfileSave);
+  profileActions.appendChild(btnProfileRestore);
+  const profileContent = document.createElement('div');
+  profileContent.className = 'esj-drawer-profile-content';
+
+  function makeProfileValueRow(labelText: string): { row: HTMLDivElement; valueEl: HTMLSpanElement } {
+    const row = document.createElement('div');
+    row.className = 'esj-setting-row';
+    const label = document.createElement('div');
+    label.className = 'esj-setting-label';
+    const labelTextEl = document.createElement('span');
+    labelTextEl.textContent = labelText;
+    label.appendChild(labelTextEl);
+    const valueEl = document.createElement('span');
+    valueEl.className = 'esj-setting-value';
+    valueEl.textContent = '-';
+    row.appendChild(label);
+    row.appendChild(valueEl);
+    return { row, valueEl };
+  }
+
+  const profileFontRow = makeProfileValueRow('字級');
+  const profileLineHeightRow = makeProfileValueRow('行高');
+  const profileParaSpacingRow = makeProfileValueRow('段距');
+  const profilePagePaddingXRow = makeProfileValueRow('左右邊距');
+  const profilePagePaddingYRow = makeProfileValueRow('上下邊距');
+  const profilePageMaxWidthRow = makeProfileValueRow('最大寬度');
+  const profileRemoveSingleEmptyRow = makeProfileValueRow('去除空段落');
+  profileRemoveSingleEmptyRow.valueEl.classList.add('esj-setting-onoff');
+
+  profileContent.appendChild(profileFontRow.row);
+  profileContent.appendChild(profileLineHeightRow.row);
+  profileContent.appendChild(profileParaSpacingRow.row);
+  profileContent.appendChild(profilePagePaddingXRow.row);
+  profileContent.appendChild(profilePagePaddingYRow.row);
+  profileContent.appendChild(profilePageMaxWidthRow.row);
+  profileContent.appendChild(profileRemoveSingleEmptyRow.row);
+
+  profileSection.appendChild(profileHeader);
+  profileSection.appendChild(profileActions);
+  profileSection.appendChild(profileContent);
+  readerSettingsSection.appendChild(profileSection);
+
+  const fontSection = document.createElement('section');
+  fontSection.className = 'esj-drawer-font-section';
+  fontSection.setAttribute('aria-label', '字體');
+  const fontTitle = document.createElement('div');
+  fontTitle.className = 'esj-drawer-reader-settings-title';
+  fontTitle.textContent = '字體';
+  const fontSourceRow = document.createElement('div');
+  fontSourceRow.className = 'esj-setting-row';
+  const fontSourceLabel = document.createElement('div');
+  fontSourceLabel.className = 'esj-setting-label';
+  const fontSourceLabelText = document.createElement('span');
+  fontSourceLabelText.textContent = '字體來源';
+  fontSourceLabel.appendChild(fontSourceLabelText);
+  const fontSourceControls = document.createElement('div');
+  fontSourceControls.className = 'esj-setting-controls';
+  const selectFontSource = document.createElement('select');
+  selectFontSource.id = 'esj-font-source-select';
+  selectFontSource.className = 'esj-setting-select';
+  selectFontSource.setAttribute('aria-label', '字體來源');
+  fontSourceControls.appendChild(selectFontSource);
+  fontSourceRow.appendChild(fontSourceLabel);
+  fontSourceRow.appendChild(fontSourceControls);
+
+  const localFontRow = document.createElement('div');
+  localFontRow.className = 'esj-setting-row esj-font-local-row';
+  const localFontLabel = document.createElement('div');
+  localFontLabel.className = 'esj-setting-label';
+  const localFontLabelText = document.createElement('span');
+  localFontLabelText.textContent = '本機字體';
+  localFontLabel.appendChild(localFontLabelText);
+  const localFontControls = document.createElement('div');
+  localFontControls.className = 'esj-setting-controls';
+  const selectLocalFont = document.createElement('select');
+  selectLocalFont.id = 'esj-local-font-select';
+  selectLocalFont.className = 'esj-setting-select';
+  selectLocalFont.setAttribute('aria-label', '選擇本機字體');
+  localFontControls.appendChild(selectLocalFont);
+  localFontRow.appendChild(localFontLabel);
+  localFontRow.appendChild(localFontControls);
+  fontSection.appendChild(fontTitle);
+  fontSection.appendChild(fontSourceRow);
+  fontSection.appendChild(localFontRow);
+  const fontWebControls = document.createElement('div');
+  fontWebControls.className = 'esj-font-web-controls';
+  const fontWebPresets = document.createElement('div');
+  fontWebPresets.className = 'esj-font-web-presets';
+  function makeWebFontPresetRow(label: string, presetId: string): HTMLDivElement {
+    const row = document.createElement('div');
+    row.className = 'esj-font-preset-row';
+    const rowLabel = document.createElement('span');
+    rowLabel.className = 'esj-font-preset-label';
+    rowLabel.textContent = `${label} 粗細：`;
+    const weightSelect = document.createElement('select');
+    weightSelect.className = 'esj-setting-select esj-font-weight-select';
+    for (let w = 100; w <= 900; w += 100) {
+      const opt = document.createElement('option');
+      opt.value = String(w);
+      opt.textContent = String(w);
+      if (w === 400) opt.selected = true;
+      weightSelect.appendChild(opt);
+    }
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'esj-setting-btn esj-font-preset-btn';
+    btn.textContent = '套用';
+    btn.dataset.fontPreset = presetId;
+    row.appendChild(rowLabel);
+    row.appendChild(weightSelect);
+    row.appendChild(btn);
+    return row;
+  }
+  fontWebPresets.appendChild(makeWebFontPresetRow('思源宋體', 'noto-serif-tc'));
+  fontWebPresets.appendChild(makeWebFontPresetRow('思源黑體', 'noto-sans-tc'));
+  const inputWebFontCssUrl = document.createElement('input');
+  inputWebFontCssUrl.type = 'url';
+  inputWebFontCssUrl.className = 'esj-setting-input';
+  inputWebFontCssUrl.placeholder = 'Web Font CSS URL';
+  inputWebFontCssUrl.setAttribute('aria-label', 'Web Font CSS URL');
+  const inputWebFontFamily = document.createElement('input');
+  inputWebFontFamily.type = 'text';
+  inputWebFontFamily.className = 'esj-setting-input';
+  inputWebFontFamily.placeholder = 'font-family';
+  inputWebFontFamily.setAttribute('aria-label', 'Web Font font-family');
+  const btnApplyWebFont = document.createElement('button');
+  btnApplyWebFont.type = 'button';
+  btnApplyWebFont.className = 'esj-setting-btn esj-font-web-apply-btn';
+  btnApplyWebFont.textContent = '套用';
+  fontWebControls.appendChild(fontWebPresets);
+  fontWebControls.appendChild(inputWebFontCssUrl);
+  fontWebControls.appendChild(inputWebFontFamily);
+  fontWebControls.appendChild(btnApplyWebFont);
+  fontSection.appendChild(fontWebControls);
+  readerSettingsSection.appendChild(fontSection);
   drawerPanel.appendChild(readerSettingsSection);
 
   drawerOverlay.appendChild(drawerBackdrop);
@@ -366,6 +593,111 @@ export function createReaderDom(
   footer.appendChild(btnNextPage);
   footer.appendChild(btnNextChap);
 
+  const readerAdjustOverlay = document.createElement('div');
+  readerAdjustOverlay.id = 'esj-reader-adjust-overlay';
+  readerAdjustOverlay.setAttribute('role', 'dialog');
+  readerAdjustOverlay.setAttribute('aria-modal', 'true');
+  readerAdjustOverlay.setAttribute('aria-hidden', 'true');
+
+  const readerAdjustBackdrop = document.createElement('div');
+  readerAdjustBackdrop.className = 'esj-reader-adjust-backdrop';
+
+  const readerAdjustPanel = document.createElement('div');
+  readerAdjustPanel.className = 'esj-reader-adjust-panel';
+
+  const readerAdjustTitle = document.createElement('div');
+  readerAdjustTitle.className = 'esj-reader-adjust-title';
+  readerAdjustTitle.textContent = '閱讀參數調整';
+
+  function makeAdjustRow(labelText: string): {
+    row: HTMLDivElement;
+    valueEl: HTMLSpanElement;
+    decBtn: HTMLButtonElement;
+    rangeEl: HTMLInputElement;
+    incBtn: HTMLButtonElement;
+  } {
+    const row = document.createElement('div');
+    row.className = 'esj-reader-adjust-item';
+    const label = document.createElement('div');
+    label.className = 'esj-reader-adjust-item-label';
+    label.textContent = labelText;
+    const valueEl = document.createElement('span');
+    valueEl.className = 'esj-reader-adjust-item-value';
+    valueEl.textContent = '-';
+    label.appendChild(valueEl);
+
+    const controls = document.createElement('div');
+    controls.className = 'esj-reader-adjust-row';
+    const decBtn = document.createElement('button');
+    decBtn.type = 'button';
+    decBtn.className = 'esj-reader-adjust-btn';
+    decBtn.setAttribute('aria-label', `${labelText}減少`);
+    decBtn.appendChild(iconMinus(18));
+    const rangeEl = document.createElement('input');
+    rangeEl.type = 'range';
+    rangeEl.className = 'esj-reader-adjust-range';
+    rangeEl.step = '1';
+    rangeEl.min = '0';
+    rangeEl.max = '100';
+    rangeEl.value = '50';
+    const incBtn = document.createElement('button');
+    incBtn.type = 'button';
+    incBtn.className = 'esj-reader-adjust-btn';
+    incBtn.setAttribute('aria-label', `${labelText}增加`);
+    incBtn.appendChild(iconPlus(18));
+    controls.appendChild(decBtn);
+    controls.appendChild(rangeEl);
+    controls.appendChild(incBtn);
+    row.appendChild(label);
+    row.appendChild(controls);
+    return { row, valueEl, decBtn, rangeEl, incBtn };
+  }
+
+  const adjustFontRow = makeAdjustRow('字級');
+  const adjustLineHeightRow = makeAdjustRow('行高');
+  const adjustParaSpacingRow = makeAdjustRow('段距');
+  const adjustPagePaddingXRow = makeAdjustRow('左右邊距');
+  const adjustPagePaddingYRow = makeAdjustRow('上下邊距');
+  const adjustPageMaxWidthRow = makeAdjustRow('最大寬度');
+  readerAdjustPanel.appendChild(readerAdjustTitle);
+  readerAdjustPanel.appendChild(adjustFontRow.row);
+  readerAdjustPanel.appendChild(adjustLineHeightRow.row);
+  readerAdjustPanel.appendChild(adjustParaSpacingRow.row);
+  readerAdjustPanel.appendChild(adjustPagePaddingXRow.row);
+  readerAdjustPanel.appendChild(adjustPagePaddingYRow.row);
+  readerAdjustPanel.appendChild(adjustPageMaxWidthRow.row);
+  const readerAdjustRemoveSingleEmptyRow = document.createElement('div');
+  readerAdjustRemoveSingleEmptyRow.className = 'esj-reader-adjust-item';
+  const readerAdjustRemoveSingleEmptyLabel = document.createElement('div');
+  readerAdjustRemoveSingleEmptyLabel.className = 'esj-reader-adjust-item-label';
+  const readerAdjustRemoveSingleEmptyLabelText = document.createElement('span');
+  readerAdjustRemoveSingleEmptyLabelText.textContent = '去除空段落';
+  readerAdjustRemoveSingleEmptyLabel.appendChild(readerAdjustRemoveSingleEmptyLabelText);
+  const readerAdjustRemoveSingleEmptyBtn = document.createElement('button');
+  readerAdjustRemoveSingleEmptyBtn.type = 'button';
+  readerAdjustRemoveSingleEmptyBtn.className = 'esj-reader-adjust-btn esj-reader-adjust-toggle-btn';
+  readerAdjustRemoveSingleEmptyBtn.setAttribute('aria-label', '去除空段落');
+  readerAdjustRemoveSingleEmptyBtn.setAttribute('aria-pressed', 'false');
+  const iconReaderAdjustRemoveSingleEmptyCheckEl = iconCheck(18);
+  iconReaderAdjustRemoveSingleEmptyCheckEl.style.display = 'none';
+  readerAdjustRemoveSingleEmptyBtn.appendChild(iconReaderAdjustRemoveSingleEmptyCheckEl);
+  const readerAdjustRemoveSingleEmptyControls = document.createElement('div');
+  readerAdjustRemoveSingleEmptyControls.className = 'esj-reader-adjust-row';
+  readerAdjustRemoveSingleEmptyControls.appendChild(readerAdjustRemoveSingleEmptyBtn);
+  readerAdjustRemoveSingleEmptyRow.appendChild(readerAdjustRemoveSingleEmptyLabel);
+  readerAdjustRemoveSingleEmptyRow.appendChild(readerAdjustRemoveSingleEmptyControls);
+  readerAdjustPanel.appendChild(readerAdjustRemoveSingleEmptyRow);
+  const readerAdjustActions = document.createElement('div');
+  readerAdjustActions.className = 'esj-reader-adjust-actions';
+  const btnReaderAdjustApply = document.createElement('button');
+  btnReaderAdjustApply.type = 'button';
+  btnReaderAdjustApply.id = 'esj-reader-adjust-apply';
+  btnReaderAdjustApply.textContent = '確定';
+  readerAdjustActions.appendChild(btnReaderAdjustApply);
+  readerAdjustPanel.appendChild(readerAdjustActions);
+  readerAdjustOverlay.appendChild(readerAdjustBackdrop);
+  readerAdjustOverlay.appendChild(readerAdjustPanel);
+
   const pageJumpOverlay = document.createElement('div');
   pageJumpOverlay.id = 'esj-page-jump-overlay';
   pageJumpOverlay.setAttribute('role', 'dialog');
@@ -429,6 +761,7 @@ export function createReaderDom(
   readerRoot.appendChild(header);
   readerRoot.appendChild(footer);
   readerRoot.appendChild(drawerOverlay);
+  readerRoot.appendChild(readerAdjustOverlay);
   readerRoot.appendChild(pageJumpOverlay);
 
   return {
@@ -437,7 +770,9 @@ export function createReaderDom(
     header,
     btnHeaderMenu,
     iconHeaderMenu,
-    headerPageLabel,
+    btnHeaderFullscreen,
+    iconHeaderFullscreenExpand,
+    iconHeaderFullscreenShrink,
     drawerOverlay,
     drawerBackdrop,
     iconTocEl,
@@ -463,18 +798,65 @@ export function createReaderDom(
     readerSettingFontValue: fontRow.valueEl,
     readerSettingLineHeightValue: lineHeightRow.valueEl,
     readerSettingParaSpacingValue: paraSpacingRow.valueEl,
-    readerSettingPagePaddingValue: pagePaddingRow.valueEl,
-    btnReaderFontDec: fontRow.decBtn,
-    btnReaderFontInc: fontRow.incBtn,
-    btnReaderLineHeightDec: lineHeightRow.decBtn,
-    btnReaderLineHeightInc: lineHeightRow.incBtn,
-    btnReaderParaSpacingDec: paraSpacingRow.decBtn,
-    btnReaderParaSpacingInc: paraSpacingRow.incBtn,
-    btnReaderPagePaddingDec: pagePaddingRow.decBtn,
-    btnReaderPagePaddingInc: pagePaddingRow.incBtn,
-    btnRemoveSingleEmptyParagraph: removeSingleEmptyRow,
-    iconRemoveSingleEmptyOffEl,
-    iconRemoveSingleEmptyOnEl,
+    readerSettingPagePaddingXValue: pagePaddingRow.valueEl,
+    readerSettingPagePaddingYValue: pagePaddingYRow.valueEl,
+    readerSettingPageMaxWidthValue: pageMaxWidthRow.valueEl,
+    btnReaderSettingsAdjust,
+    btnReaderSettingsDropdown,
+    iconReaderSettingsChevronDownEl,
+    iconReaderSettingsChevronUpEl,
+    readerSettingsContent,
+    btnProfileSave,
+    btnProfileRestore,
+    btnProfileDropdown,
+    iconProfileChevronDownEl,
+    iconProfileChevronUpEl,
+    profileContent,
+    profileFontValue: profileFontRow.valueEl,
+    profileLineHeightValue: profileLineHeightRow.valueEl,
+    profileParaSpacingValue: profileParaSpacingRow.valueEl,
+    profilePagePaddingXValue: profilePagePaddingXRow.valueEl,
+    profilePagePaddingYValue: profilePagePaddingYRow.valueEl,
+    profilePageMaxWidthValue: profilePageMaxWidthRow.valueEl,
+    profileRemoveSingleEmptyValue: profileRemoveSingleEmptyRow.valueEl,
+    selectFontSource,
+    fontLocalRow: localFontRow,
+    selectLocalFont,
+    fontWebControls,
+    inputWebFontCssUrl,
+    inputWebFontFamily,
+    btnApplyWebFont,
+    readerRemoveSingleEmptyValue,
+    readerAdjustOverlay,
+    readerAdjustBackdrop,
+    readerAdjustPanel,
+    readerAdjustFontValue: adjustFontRow.valueEl,
+    btnReaderAdjustFontDec: adjustFontRow.decBtn,
+    rangeReaderAdjustFont: adjustFontRow.rangeEl,
+    btnReaderAdjustFontInc: adjustFontRow.incBtn,
+    readerAdjustLineHeightValue: adjustLineHeightRow.valueEl,
+    btnReaderAdjustLineHeightDec: adjustLineHeightRow.decBtn,
+    rangeReaderAdjustLineHeight: adjustLineHeightRow.rangeEl,
+    btnReaderAdjustLineHeightInc: adjustLineHeightRow.incBtn,
+    readerAdjustParaSpacingValue: adjustParaSpacingRow.valueEl,
+    btnReaderAdjustParaSpacingDec: adjustParaSpacingRow.decBtn,
+    rangeReaderAdjustParaSpacing: adjustParaSpacingRow.rangeEl,
+    btnReaderAdjustParaSpacingInc: adjustParaSpacingRow.incBtn,
+    readerAdjustPagePaddingXValue: adjustPagePaddingXRow.valueEl,
+    btnReaderAdjustPagePaddingXDec: adjustPagePaddingXRow.decBtn,
+    rangeReaderAdjustPagePaddingX: adjustPagePaddingXRow.rangeEl,
+    btnReaderAdjustPagePaddingXInc: adjustPagePaddingXRow.incBtn,
+    readerAdjustPagePaddingYValue: adjustPagePaddingYRow.valueEl,
+    btnReaderAdjustPagePaddingYDec: adjustPagePaddingYRow.decBtn,
+    rangeReaderAdjustPagePaddingY: adjustPagePaddingYRow.rangeEl,
+    btnReaderAdjustPagePaddingYInc: adjustPagePaddingYRow.incBtn,
+    readerAdjustPageMaxWidthValue: adjustPageMaxWidthRow.valueEl,
+    btnReaderAdjustPageMaxWidthDec: adjustPageMaxWidthRow.decBtn,
+    rangeReaderAdjustPageMaxWidth: adjustPageMaxWidthRow.rangeEl,
+    btnReaderAdjustPageMaxWidthInc: adjustPageMaxWidthRow.incBtn,
+    btnReaderAdjustRemoveSingleEmpty: readerAdjustRemoveSingleEmptyBtn,
+    btnReaderAdjustApply,
+    iconReaderAdjustRemoveSingleEmptyCheckEl,
     pageJumpOverlay,
     pageJumpBackdrop,
     pageJumpPanel,

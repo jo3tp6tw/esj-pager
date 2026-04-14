@@ -2,18 +2,23 @@ import {
   AArrowDown,
   AArrowUp,
   ALargeSmall,
+  ArrowDownToLine,
+  ChevronDown,
+  ChevronUp,
+  ClipboardPaste,
   createElement,
   ChevronsLeft,
   ChevronsRight,
   Diff,
+  Expand,
+  Check,
   Menu,
   Minus,
   MoveLeft,
   MoveRight,
   PenLine,
   Plus,
-  Square,
-  SquareCheck,
+  Shrink,
   TableOfContents,
 } from 'lucide';
 import type { IconNode } from 'lucide';
@@ -47,6 +52,16 @@ export function iconNextPage(size = 22): SVGElement {
 /** 頂欄選單 */
 export function iconMenu(size = 22): SVGElement {
   return makeIcon(Menu, size);
+}
+
+/** 全螢幕展開 */
+export function iconExpand(size = 22): SVGElement {
+  return makeIcon(Expand, size);
+}
+
+/** 全螢幕收合 */
+export function iconShrink(size = 22): SVGElement {
+  return makeIcon(Shrink, size);
 }
 
 /** 抽屜章節目錄 */
@@ -89,12 +104,27 @@ export function iconPenLine(size = 18): SVGElement {
   return makeIcon(PenLine, size);
 }
 
-/** 未勾選方框 */
-export function iconSquare(size = 18): SVGElement {
-  return makeIcon(Square, size);
+/** 勾選 */
+export function iconCheck(size = 18): SVGElement {
+  return makeIcon(Check, size);
 }
 
-/** 已勾選方框 */
-export function iconSquareCheck(size = 18): SVGElement {
-  return makeIcon(SquareCheck, size);
+/** 儲存設定檔 */
+export function iconArrowDownToLine(size = 18): SVGElement {
+  return makeIcon(ArrowDownToLine, size);
+}
+
+/** 載入設定檔 */
+export function iconClipboardPaste(size = 18): SVGElement {
+  return makeIcon(ClipboardPaste, size);
+}
+
+/** 下拉 */
+export function iconChevronDown(size = 18): SVGElement {
+  return makeIcon(ChevronDown, size);
+}
+
+/** 收合 */
+export function iconChevronUp(size = 18): SVGElement {
+  return makeIcon(ChevronUp, size);
 }

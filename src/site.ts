@@ -2,11 +2,16 @@
 
 export const SELECTORS = {
   forumContent: '.forum-content',
+  comments: '#comments',
   title: 'h2, .forum-content-title',
 } as const;
 
 export function getForumContent(): HTMLElement | null {
   return document.querySelector<HTMLElement>(SELECTORS.forumContent);
+}
+
+export function getCommentsRoot(): HTMLElement | null {
+  return document.querySelector<HTMLElement>(SELECTORS.comments);
 }
 
 export function getChapterTitle(): string {

@@ -24,14 +24,14 @@ function ellipsizeToWidth(ctx: CanvasRenderingContext2D, raw: string, maxWidth: 
 
 export function drawBottomMetadata(
   ctx: CanvasRenderingContext2D,
-  width: number,
   height: number,
   title: string,
   pageLabel: string,
   settings: ReaderSettings,
-  maxWidth: number,
+  textLeft: number,
+  textWidth: number,
 ): void {
-  const metaY = height - settings.pagePadding / 2;
+  const metaY = height - settings.pagePaddingY / 2;
   const metaGap = 12;
 
   ctx.textBaseline = 'middle';
@@ -39,14 +39,14 @@ export function drawBottomMetadata(
   ctx.fillStyle = '#666';
 
   const rightW = ctx.measureText(pageLabel).width;
-  const rightX = width - settings.pagePadding;
+  const rightX = textLeft + textWidth;
   ctx.textAlign = 'right';
   ctx.fillText(pageLabel, rightX, metaY);
 
-  const titleMaxW = Math.max(0, maxWidth - rightW - metaGap);
+  const titleMaxW = Math.max(0, textWidth - rightW - metaGap);
   const metaTitle = ellipsizeToWidth(ctx, title, titleMaxW);
   ctx.textAlign = 'left';
-  ctx.fillText(metaTitle, settings.pagePadding, metaY);
+  ctx.fillText(metaTitle, textLeft, metaY);
 
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';

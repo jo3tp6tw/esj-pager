@@ -71,15 +71,6 @@
       text-overflow: ellipsis;
     }
 
-    #esj-reader-header-page {
-      flex-shrink: 0;
-      font-size: var(--esj-header-page-font-size);
-      color: #888;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
     #esj-reader-drawer {
       position: fixed;
       inset: 0;
@@ -128,16 +119,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0;
-      min-height: 66px;
-      padding: 10px 16px;
+      gap: 8px;
+      height: var(--esj-header-h);
+      min-height: var(--esj-header-h);
+      padding: 0 16px;
       box-sizing: border-box;
       color: #111;
       text-decoration: none;
       border-top: 1px solid #e0e0e0;
       border-bottom: 1px solid #e0e0e0;
-      background: #fafafa;
+      background: #fff;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    .esj-drawer-toc-text {
+      font-size: 16px;
+      color: #111;
+      line-height: 1;
     }
 
     a.esj-drawer-toc-row:any-link,
@@ -165,7 +163,7 @@
       padding: 12px 12px 18px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
     }
 
     .esj-drawer-reader-settings-title {
@@ -174,15 +172,35 @@
       padding: 2px 4px 6px;
     }
 
+    .esj-drawer-reader-settings-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .esj-drawer-settings-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 4px;
+    }
+
+    .esj-drawer-settings-content {
+      display: none;
+    }
+
+    .esj-drawer-settings-content.open {
+      display: block;
+    }
+
     .esj-setting-row {
       display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 6px;
-      border: 1px solid #e5e5e5;
-      border-radius: 8px;
-      background: #fff;
-      padding: 6px 8px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 4px 2px;
     }
 
     .esj-setting-label {
@@ -206,8 +224,8 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      width: 100%;
-      justify-content: flex-end;
+      min-width: 0;
+      flex-shrink: 0;
     }
 
     .esj-setting-btn {
@@ -231,12 +249,227 @@
     }
 
     .esj-setting-value {
-      min-width: 0;
-      flex: 1;
+      min-width: 40px;
       text-align: center;
       font-size: 13px;
       color: #111;
       font-variant-numeric: tabular-nums;
+    }
+
+    .esj-setting-onoff {
+      min-width: 44px;
+      letter-spacing: 0.4px;
+    }
+
+    .esj-drawer-profile-section {
+      border-top: 1px solid #ececec;
+      margin-top: 4px;
+      padding-top: 8px;
+    }
+
+    .esj-drawer-profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .esj-drawer-profile-header-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .esj-drawer-profile-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 4px;
+    }
+
+    .esj-drawer-profile-content {
+      display: none;
+      margin-top: 4px;
+    }
+
+    .esj-drawer-profile-content.open {
+      display: block;
+    }
+
+    .esj-drawer-font-section {
+      border-top: 1px solid #ececec;
+      margin-top: 4px;
+      padding: 8px 4px 0;
+    }
+
+    .esj-setting-select {
+      min-width: 160px;
+      max-width: 190px;
+      height: 32px;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      background: #fff;
+      color: #111;
+      padding: 0 8px;
+      font-size: 13px;
+    }
+
+    .esj-font-web-controls {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin: 8px 2px 2px;
+    }
+
+    .esj-font-web-controls.open {
+      display: flex;
+    }
+
+    .esj-font-web-presets {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .esj-font-preset-row {
+      display: grid;
+      grid-template-columns: 1fr 84px 60px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .esj-font-preset-label {
+      font-size: 13px;
+      color: #333;
+      white-space: nowrap;
+    }
+
+    .esj-font-weight-select {
+      min-width: 84px;
+      max-width: 84px;
+    }
+
+    .esj-font-preset-btn {
+      width: 60px;
+      height: 30px;
+    }
+
+    .esj-font-local-row.hidden {
+      display: none;
+    }
+
+    .esj-setting-input {
+      width: 100%;
+      box-sizing: border-box;
+      height: 32px;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      background: #fff;
+      color: #111;
+      padding: 0 8px;
+      font-size: 13px;
+    }
+
+    .esj-font-web-apply-btn {
+      width: 100%;
+      height: 32px;
+    }
+
+    #esj-reader-adjust-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 28;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: min(16vh, 96px) 16px 24px;
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+
+    #esj-reader-adjust-overlay.open {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .esj-reader-adjust-backdrop {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+
+    .esj-reader-adjust-panel {
+      position: relative;
+      width: min(460px, 100%);
+      border: 1px solid #cfcfcf;
+      border-radius: 10px;
+      padding: 14px 14px 12px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+      color: #111;
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .esj-reader-adjust-title {
+      font-size: 15px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .esj-reader-adjust-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .esj-reader-adjust-item-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .esj-reader-adjust-item-value {
+      font-variant-numeric: tabular-nums;
+      color: #111;
+    }
+
+    .esj-reader-adjust-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .esj-reader-adjust-btn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #bfbfbf;
+      border-radius: 8px;
+      background: #fff;
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .esj-reader-adjust-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .esj-reader-adjust-range {
+      flex: 1;
+      min-width: 0;
     }
 
     .esj-setting-toggle-row {
@@ -244,12 +477,32 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      border: 1px solid #e5e5e5;
-      border-radius: 8px;
-      background: #fff;
+      border: none;
+      border-radius: 0;
+      background: transparent;
       color: #333;
-      padding: 10px 8px;
-      margin-top: 2px;
+      padding: 6px 2px;
+      margin-top: 0;
+    }
+
+    .esj-reader-adjust-toggle-btn {
+      margin-left: 0;
+    }
+
+    .esj-reader-adjust-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    #esj-reader-adjust-apply {
+      padding: 8px 16px;
+      font-size: 15px;
+      border: 1px solid #111;
+      border-radius: 6px;
+      background: #111;
+      color: #fff;
+      cursor: pointer;
     }
 
     .esj-setting-toggle-icon {
@@ -277,7 +530,7 @@
     }
 
     #esj-canvas-tap-layer {
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: 1;
       pointer-events: none;

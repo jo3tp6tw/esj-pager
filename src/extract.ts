@@ -72,3 +72,44 @@ export function extractBlocksFromHtml(html: string): Block[] {
   flushParagraph();
   return blocks;
 }
+
+/**
+ * Parse ESJ comments section into paragraph blocks.
+ * Output is intentionally text-only so it can reuse the existing paginator.
+ */
+export function extractCommentBlocksFromHtml(html: string): Block[] {
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  temp.querySelectorAll('script, style, iframe').forEach((el) => el.remove());
+
+  const commentEls = [...temp.querySelectorAll<HTMLElement>('.comment')];
+  if (commentEls.length === 0) return [];
+
+  const blocks: Block[] = [];
+  blocks.push({ type: 'commentMeta', text: '' });
+  blocks.push({ type: 'commentMeta', text: '========== 留言區 ==========' });
+  blocks.push({ type: 'commentMeta', text: '' });
+
+  for (const el of commentEls) {
+    const floor = (el.querySelector('.comment-floor')?.textContent ?? '').trim();
+    const author = (el.querySelector('.comment-title a, .comment-title')?.textContent ?? '').trim();
+    const time = (el.querySelector('.comment-meta:not(.comment-floor)')?.textContent ?? '').trim();
+    const quoteEl = el.querySelector<HTMLElement>('blockquote');
+    const quoteText = (quoteEl?.textContent ?? '').replace(/\u00a0/g, ' ').trim();
+    const textEl = el.querySelector<HTMLElement>('.comment-text');
+    const text = (textEl?.textContent ?? '').replace(/\u00a0/g, ' ').trim();
+
+    const headerParts = [floor, author, time].filter((v) => v.length > 0);
+    blocks.push({ type: 'commentDivider' });
+    if (headerParts.length > 0) {
+      blocks.push({ type: 'commentMeta', text: headerParts.join('  ') });
+    }
+    if (quoteText) {
+      blocks.push({ type: 'commentMeta', text: `回覆：${quoteText}` });
+    }
+    blocks.push({ type: 'commentMain', text: text || '[無文字內容]' });
+    blocks.push({ type: 'commentMeta', text: '' });
+  }
+
+  return blocks;
+}

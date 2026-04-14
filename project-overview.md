@@ -1,18 +1,18 @@
 # esj-pager 專案概覽
 
-## 新同事 3 分鐘上手路徑
-
-1. 先看 `src/main.ts`：掌握整體流程（初始化、事件、render、手勢、章節導覽）。
-2. 再看 `src/reader/dom.ts` + `src/reader/styles.ts`：理解 UI 組裝與樣式分層（header/footer/drawer/設定列）。
-3. 接著看 `src/reader/settings.ts`：知道 RWD chrome preset 與 reader 預設參數來源。
-4. 再看 `src/extract.ts` + `src/pagination.ts`：理解「HTML → Block[] → 分頁游標」核心演算法。
-5. 最後看 `src/site.ts` + `src/lucideIcons.ts`：補齊站點資料來源與 icon 封裝細節。
-
 ## 專案目標
 
-- 將 ESJ 章節頁改成全螢幕翻頁閱讀器（Canvas 分頁渲染），取代長捲動閱讀。
-- 內容來源完全來自頁面既有 DOM（`.forum-content`），不依賴站方 API。
-- 以 userscript 形式部署（Tampermonkey / Violentmonkey）。
+- 把 ESJ 章節頁改造成全螢幕 Canvas 分頁閱讀器，取代原頁面長捲動。
+- 內容來源完全來自頁面 DOM（正文與留言），不依賴站方 API。
+- 以 userscript 形式使用（Tampermonkey / Violentmonkey）。
+
+## 新同事 3 分鐘上手路徑
+
+1. `src/main.ts`：閱讀器主流程、狀態管理、UI 事件、快捷鍵、字體切換、render 策略。
+2. `src/pagination.ts`：核心分頁邏輯（`buildPageStarts` / `walkOnePage` / `wrapByChar`）。
+3. `src/reader/dom.ts` + `src/reader/styles.ts`：閱讀器 DOM 組裝與 UI 樣式。
+4. `src/extract.ts` + `src/types.ts`：正文/留言抽取與 `Block` 型別。
+5. `src/reader/settings.ts` + `src/site.ts`：預設參數與站點 selector/navigation。
 
 ## 技術與建置
 
@@ -24,63 +24,92 @@
 | 指令 | `npm run build` / `npm run watch` |
 | 圖示 | Lucide（具名 import，tree-shaking） |
 
-## 目前程式結構
+## 程式結構（現況）
 
-- `src/main.ts`：閱讀器主流程（狀態、事件、分頁重算、翻頁手勢、章節跳轉）。
-- `src/reader/settings.ts`：`readerSettings`、`chromeSettings`（mobile/tablet/desktop）與 breakpoint 判斷。
-- `src/reader/styles.ts`：閱讀器樣式字串（header/footer/drawer/設定列/跳頁浮層）。
-- `src/reader/dom.ts`：閱讀器 DOM 組裝與 refs 回傳。
-- `src/reader/renderCanvas.ts`：Canvas 底部資訊列（標題 + 頁碼）與 ellipsis 處理。
-- `src/extract.ts`：HTML 轉 `Block[]`（包含空段落與圖片 block）。
-- `src/pagination.ts`：`buildPageStarts` / `walkOnePage` / `wrapByChar`。
-- `src/site.ts`：章節標題、目錄連結、上下章連結等站點資訊抽取。
-- `src/lucideIcons.ts`：專案內使用的 Lucide icon 工具函式。
+- `src/main.ts`：閱讀器初始化、設定持久化、翻頁互動、字體來源（本機/Web Font）切換、局部預覽與重算流程。
+- `src/pagination.ts`：分頁游標計算、畫面區塊繪製規則、留言區專用樣式（meta/main/divider）。
+- `src/extract.ts`：正文區塊與留言區塊萃取（含回覆引用處理）。
+- `src/types.ts`：`Block` 型別定義（`paragraph`/`img`/`commentMeta`/`commentMain`/`commentDivider`）。
+- `src/reader/dom.ts`：header/footer/drawer/調整面板/跳頁面板/字體區塊 DOM refs。
+- `src/reader/styles.ts`：閱讀器所有樣式（含字體區塊與 Web Font 快捷按鈕樣式）。
+- `src/reader/settings.ts`：閱讀參數預設值與 RWD chrome preset。
+- `src/reader/renderCanvas.ts`：底部 metadata 繪製。
+- `src/site.ts`：正文、留言、標題、上下章、目錄連結 selector。
+- `src/lucideIcons.ts`：專案 icon 封裝。
 
-## 目前功能現狀
+## 功能現況
 
-### 內容與分頁
+### 內容來源與分頁
 
-- 章節內容先轉成 `Block[]`（`paragraph` / `img`），再以 Canvas 逐頁排版。
-- 分頁僅儲存每頁起始游標（`Cursor`），避免複製整頁內容。
-- 正文顯示區使用 `readerSettings`（字級、行高、段距、頁邊距）即時重排。
+- 正文與留言皆會轉成 `Block[]` 後分頁，留言接在文章後方。
+- 分頁以 `Cursor`（block index + offset）保存每頁起點，記憶體占用低。
+- 正文使用可調字級/行高/段距/邊距/最大寬度。
+- 留言區有專用排版：
+  - `commentMain`：主內容
+  - `commentMeta`：較小灰字（固定間距）
+  - `commentDivider`：動態寬度分隔線（黑字，依可用寬度計算）
+
+### 圖片頁處理
+
+- 圖片依可用寬度等比例縮放繪製。
+- 當頁空間不足時顯示 `【圖】` 佔位，圖片延後到下一頁。
+- 超高圖片允許在該頁垂直捲動（`canvasWrap` 滾動）。
+- 圖片載入採快取，載入完成後自動重算重繪。
 
 ### 閱讀器 UI
 
-- 全螢幕覆蓋式閱讀器，header/footer 為半透明浮層，可中間點擊顯示/隱藏。
-- 底欄為五欄導覽（上章／上頁／中間資訊區／下頁／下章）。
-- 中間資訊區顯示頁碼，並附 `pen-line` 按鈕開啟跳頁對話框。
-- Canvas 底部 padding 區會額外畫「左側章節標題 + 右側頁碼」資訊列。
+- 覆蓋式閱讀器，header/footer 可顯示/隱藏。
+- Header：左上選單、中間章節標題、右上全螢幕切換（expand/shrink）。
+- Footer：上章 / 上頁 / 頁碼區 / 下頁 / 下章。
+- 頁碼區可開啟跳頁面板輸入頁碼。
+- Canvas 底部繪製章名 + `目前頁 / 總頁數`。
 
-### 章節與手勢
+### 互動與快捷鍵
 
-- 章節導覽支援上一章/下一章按鈕。
-- 閱讀區左右點擊手勢：
-  - 單擊：下一頁
-  - 雙擊：上一頁
-  - 第一頁雙擊：詢問後可前往上一章
-  - 最後一頁單擊：詢問後可前往下一章
-- 中間區塊點擊：切換 header/footer 顯示。
+- 點擊區：
+  - 左/右區點擊翻頁
+  - 中間區切換 chrome 顯示
+- 手勢：
+  - 滑動（含滑鼠左鍵拖曳）左右翻頁
+  - 滾輪可滾動超高圖片頁
+  - 右鍵（contextmenu）可執行上一頁
+- 快捷鍵：
+  - `ArrowLeft` / `ArrowRight` 翻頁
+  - `F` 切換全螢幕
+  - `Esc` 關閉抽屜/面板或恢復 chrome
+- 已在 capture 階段攔截左右鍵，避免原站快捷鍵干擾。
 
-### 左側選單（抽屜）
+### 左側抽屜區塊
 
-- 含章節目錄入口（table-of-contents icon）。
-- 含閱讀設定列（圖示 + 中文 + 加減）：
-  - 字級（`a-large-small` + `a-arrow-up/down`）
-  - 行高 / 段距 / 頁邊距（`diff` + `plus/minus`）
-- 含切換項目：`去除空段落`（`square` / `square-check`）。
-  - 規則：只移除「單一」空段落；連續 2 個以上空段落保留。
+- `目錄`：最上方入口（icon + 文字），高度與 header 一致。
+- `閱讀設定`：顯示目前數值，可開啟調整面板。
+- `設定檔`：顯示已儲存參數，可儲存/還原。
+- `字體`：
+  - 字體來源切換：本機字體 / Web Font
+  - 本機字體：僅顯示本機可偵測字體白名單
+  - Web Font：可手動填 CSS URL + family，並有一鍵快捷（思源宋體/思源黑體，可選字重 100~900）
 
-### RWD（目前範圍）
+### 調整面板（閱讀參數）
 
-- 目前 RWD 主要套用在 `chromeSettings`（header/footer/按鈕與 icon 尺寸）。
-- 依寬度切換 preset：
-  - `mobile`：`<= 640`
-  - `tablet`：`641 ~ 1024`
-  - `desktop`：`> 1024`
-- `readerSettings` 目前為同一組可調值，不做 breakpoint 分流。
+- 以浮動面板調整字級、行高、段距、邊距、最大寬度、去除空段落。
+- 開啟面板時記錄錨點 cursor。
+- 調整過程做局部預覽（從錨點起算當頁）。
+- 右下角 `確定` 後才做全章重算，並回到包含錨點的頁面。
+
+### 持久化（localStorage / sessionStorage）
+
+- `reader profile`：儲存閱讀參數（含 `fontFamily`）與 `去除空段落`。
+- `last page`：依章節 URL 記錄最後閱讀頁碼。
+- `web font config`：記錄最近一次 Web Font URL + family。
+- `fullscreen restore flag`（session）：跨章導頁後第一次點擊嘗試恢復全螢幕。
+
+### RWD
+
+- `chromeSettings` 依寬度套用 `mobile / tablet / desktop` preset。
+- `readerSettings` 為單一組可調參數，不分 breakpoint。
 
 ## 已知限制（現況）
 
-- 圖片目前以 `[圖片]` 文字占位，尚未在 Canvas 內繪製實圖。
-- 閱讀設定與開關目前為執行期狀態，尚未持久化（未寫入 localStorage）。
-- 跳頁目前是單純頁碼定位，尚未做內容錨點式還原。
+- Web Font 依網路與來源可用性，首次載入可能有延遲或失敗 fallback。
+- 本機字體偵測為前端推估（canvas 寬度比對），不是 OS 層級精準查詢。
+- 圖片未提供縮放手勢或獨立圖片檢視器。
