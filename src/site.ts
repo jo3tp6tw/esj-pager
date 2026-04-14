@@ -20,20 +20,57 @@ export function getChapterTitle(): string {
   return fromDom || document.title;
 }
 
-const PREV_LINK_TEXTS = ['上一篇', '上一章', 'Previous', 'Prev'];
-const NEXT_LINK_TEXTS = ['下一篇', '下一章', 'Next'];
+const PREV_LINK_TEXTS = ['上一篇', '上一章', 'Previous', 'Prev', '<<'];
+const NEXT_LINK_TEXTS = ['下一篇', '下一章', 'Next', '>>'];
 
-/** 與站內「上一篇／下一篇」連結文字一致（依站方文案調整，含 fallback）。 */
+function isChapterHref(href: string): boolean {
+  try {
+    const u = new URL(href, window.location.origin);
+    return /^\/forum\/\d+\/\d+\.html$/i.test(u.pathname);
+  } catch {
+    return false;
+  }
+}
+
+function pickValidHrefBySelectors(root: ParentNode, selectors: string[]): string {
+  for (const selector of selectors) {
+    const a = root.querySelector<HTMLAnchorElement>(selector);
+    if (!a?.href) continue;
+    if (!isChapterHref(a.href)) continue;
+    return a.href;
+  }
+  return '';
+}
+
+function pickValidHrefByText(root: ParentNode, candidates: string[]): string {
+  const links = [...root.querySelectorAll<HTMLAnchorElement>('a')];
+  for (const text of candidates) {
+    const match = links.find((a) => (a.textContent ?? '').includes(text) && isChapterHref(a.href));
+    if (match) return match.href;
+  }
+  return '';
+}
+
+/** 優先依 entry-navigation 左右欄位抓上下章，最後再用文字 fallback。 */
 export function getAdjacentChapterHrefs(): { prev: string; next: string } {
-  const links = [...document.querySelectorAll<HTMLAnchorElement>('a')];
-  const findByText = (candidates: string[]): string => {
-    for (const text of candidates) {
-      const match = links.find((a) => a.textContent?.includes(text));
-      if (match) return match.href;
-    }
-    return '';
-  };
-  return { prev: findByText(PREV_LINK_TEXTS), next: findByText(NEXT_LINK_TEXTS) };
+  const navs = [...document.querySelectorAll<HTMLElement>('.entry-navigation')];
+  const preferredNav = (navs.length > 0 ? navs[navs.length - 1] : null) ?? navs[0] ?? document;
+
+  const prev =
+    pickValidHrefBySelectors(preferredNav, [
+      '.column.text-left a',
+      'a.btn-prev',
+      'a[rel="prev"]',
+    ]) || pickValidHrefByText(preferredNav, PREV_LINK_TEXTS) || pickValidHrefByText(document, PREV_LINK_TEXTS);
+
+  const next =
+    pickValidHrefBySelectors(preferredNav, [
+      '.column.text-right a',
+      'a.btn-next',
+      'a[rel="next"]',
+    ]) || pickValidHrefByText(preferredNav, NEXT_LINK_TEXTS) || pickValidHrefByText(document, NEXT_LINK_TEXTS);
+
+  return { prev, next };
 }
 
 /** 從 URL 取出小說 ID（/forum/{novelId}/{chapterId}）。 */

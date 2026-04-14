@@ -332,18 +332,47 @@
     const fromDom = el?.textContent?.trim();
     return fromDom || document.title;
   }
-  var PREV_LINK_TEXTS = ["\u4E0A\u4E00\u7BC7", "\u4E0A\u4E00\u7AE0", "Previous", "Prev"];
-  var NEXT_LINK_TEXTS = ["\u4E0B\u4E00\u7BC7", "\u4E0B\u4E00\u7AE0", "Next"];
+  var PREV_LINK_TEXTS = ["\u4E0A\u4E00\u7BC7", "\u4E0A\u4E00\u7AE0", "Previous", "Prev", "<<"];
+  var NEXT_LINK_TEXTS = ["\u4E0B\u4E00\u7BC7", "\u4E0B\u4E00\u7AE0", "Next", ">>"];
+  function isChapterHref(href) {
+    try {
+      const u = new URL(href, window.location.origin);
+      return /^\/forum\/\d+\/\d+\.html$/i.test(u.pathname);
+    } catch {
+      return false;
+    }
+  }
+  function pickValidHrefBySelectors(root, selectors) {
+    for (const selector of selectors) {
+      const a = root.querySelector(selector);
+      if (!a?.href) continue;
+      if (!isChapterHref(a.href)) continue;
+      return a.href;
+    }
+    return "";
+  }
+  function pickValidHrefByText(root, candidates) {
+    const links = [...root.querySelectorAll("a")];
+    for (const text of candidates) {
+      const match = links.find((a) => (a.textContent ?? "").includes(text) && isChapterHref(a.href));
+      if (match) return match.href;
+    }
+    return "";
+  }
   function getAdjacentChapterHrefs() {
-    const links = [...document.querySelectorAll("a")];
-    const findByText = (candidates) => {
-      for (const text of candidates) {
-        const match = links.find((a) => a.textContent?.includes(text));
-        if (match) return match.href;
-      }
-      return "";
-    };
-    return { prev: findByText(PREV_LINK_TEXTS), next: findByText(NEXT_LINK_TEXTS) };
+    const navs = [...document.querySelectorAll(".entry-navigation")];
+    const preferredNav = (navs.length > 0 ? navs[navs.length - 1] : null) ?? navs[0] ?? document;
+    const prev = pickValidHrefBySelectors(preferredNav, [
+      ".column.text-left a",
+      "a.btn-prev",
+      'a[rel="prev"]'
+    ]) || pickValidHrefByText(preferredNav, PREV_LINK_TEXTS) || pickValidHrefByText(document, PREV_LINK_TEXTS);
+    const next = pickValidHrefBySelectors(preferredNav, [
+      ".column.text-right a",
+      "a.btn-next",
+      'a[rel="next"]'
+    ]) || pickValidHrefByText(preferredNav, NEXT_LINK_TEXTS) || pickValidHrefByText(document, NEXT_LINK_TEXTS);
+    return { prev, next };
   }
   function getNovelId() {
     const m = window.location.pathname.match(/\/forum\/(\d+)\//);
