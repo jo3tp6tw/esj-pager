@@ -108,6 +108,15 @@
   }
 
   // src/pagination.ts
+  var COMMENT_MAIN_MIN_SIZE = 18;
+  var COMMENT_MAIN_LINE_PX = 30;
+  var COMMENT_MAIN_PARA_SPACING = 10;
+  var COMMENT_META_MIN_SIZE = 12;
+  var COMMENT_META_SCALE = 0.7;
+  var COMMENT_META_LINE_PX = 22;
+  var COMMENT_META_PARA_SPACING = 6;
+  var COMMENT_DIVIDER_MIN_SIZE = 13;
+  var COMMENT_DIVIDER_SIZE_OFFSET = 4;
   function getBlockTextStyle(ctx, block, layout) {
     const baseFont = ctx.font;
     const baseSizeRaw = Number.parseFloat(baseFont);
@@ -115,26 +124,26 @@
     const family = baseFont.replace(/^[\d.]+px\s*/, "") || "sans-serif";
     if (block.type === "commentMain") {
       return {
-        font: `${Math.max(18, Math.round(baseSize))}px ${family}`,
-        linePx: 30,
-        paraSpacing: 10,
+        font: `${Math.max(COMMENT_MAIN_MIN_SIZE, Math.round(baseSize))}px ${family}`,
+        linePx: COMMENT_MAIN_LINE_PX,
+        paraSpacing: COMMENT_MAIN_PARA_SPACING,
         fillStyle: "#111"
       };
     }
     if (block.type === "commentMeta") {
-      const halfSize = Math.max(12, Math.round(baseSize * 0.7));
+      const halfSize = Math.max(COMMENT_META_MIN_SIZE, Math.round(baseSize * COMMENT_META_SCALE));
       return {
         font: `${halfSize}px ${family}`,
-        linePx: 22,
-        paraSpacing: 6,
+        linePx: COMMENT_META_LINE_PX,
+        paraSpacing: COMMENT_META_PARA_SPACING,
         fillStyle: "#999"
       };
     }
     if (block.type === "commentDivider") {
       return {
-        font: `${Math.max(13, Math.round(baseSize - 4))}px ${family}`,
-        linePx: 22,
-        paraSpacing: 6,
+        font: `${Math.max(COMMENT_DIVIDER_MIN_SIZE, Math.round(baseSize - COMMENT_DIVIDER_SIZE_OFFSET))}px ${family}`,
+        linePx: COMMENT_META_LINE_PX,
+        paraSpacing: COMMENT_META_PARA_SPACING,
         fillStyle: "#111"
       };
     }
@@ -148,13 +157,32 @@
   function bottomY(layout) {
     return layout.padY + layout.maxHeight;
   }
+  var charWidthCache = /* @__PURE__ */ new Map();
+  function measureCharWidth(ctx, ch) {
+    const key = `${ctx.font}\0${ch}`;
+    let w = charWidthCache.get(key);
+    if (w === void 0) {
+      w = ctx.measureText(ch).width;
+      charWidthCache.set(key, w);
+    }
+    return w;
+  }
+  function clearCharWidthCache() {
+    charWidthCache.clear();
+  }
+  var dividerCache = null;
   function buildDividerLine(ctx, maxWidth) {
     if (maxWidth <= 0) return "\u2500";
+    if (dividerCache && dividerCache.font === ctx.font && dividerCache.maxWidth === maxWidth) {
+      return dividerCache.line;
+    }
     const unit = "\u2500";
     const unitWidth = ctx.measureText(unit).width;
     if (unitWidth <= 0) return unit;
     const count = Math.max(1, Math.floor(maxWidth / unitWidth));
-    return unit.repeat(count);
+    const line = unit.repeat(count);
+    dividerCache = { font: ctx.font, maxWidth, line };
+    return line;
   }
   function walkOnePage(ctx, blocks, start, layout, draw, options = {}) {
     let y = layout.padY;
@@ -273,7 +301,7 @@
     let line = "";
     let width = 0;
     for (const ch of text) {
-      const chWidth = ctx.measureText(ch).width;
+      const chWidth = measureCharWidth(ctx, ch);
       if (line && width + chWidth > maxWidth) {
         lines.push(line);
         line = ch;
@@ -304,11 +332,18 @@
     const fromDom = el?.textContent?.trim();
     return fromDom || document.title;
   }
+  var PREV_LINK_TEXTS = ["\u4E0A\u4E00\u7BC7", "\u4E0A\u4E00\u7AE0", "Previous", "Prev"];
+  var NEXT_LINK_TEXTS = ["\u4E0B\u4E00\u7BC7", "\u4E0B\u4E00\u7AE0", "Next"];
   function getAdjacentChapterHrefs() {
     const links = [...document.querySelectorAll("a")];
-    const prev = links.find((a) => a.textContent?.includes("\u4E0A\u4E00\u7BC7"))?.href ?? "";
-    const next = links.find((a) => a.textContent?.includes("\u4E0B\u4E00\u7BC7"))?.href ?? "";
-    return { prev, next };
+    const findByText = (candidates) => {
+      for (const text of candidates) {
+        const match = links.find((a) => a.textContent?.includes(text));
+        if (match) return match.href;
+      }
+      return "";
+    };
+    return { prev: findByText(PREV_LINK_TEXTS), next: findByText(NEXT_LINK_TEXTS) };
   }
   function getNovelId() {
     const m = window.location.pathname.match(/\/forum\/(\d+)\//);
@@ -1219,10 +1254,11 @@
     return raw.slice(0, lo) + ellipsis;
   }
   function drawBottomMetadata(ctx, height, title, pageLabel, settings, textLeft, textWidth) {
-    const metaY = height - settings.pagePaddingY / 2;
+    const metaFontSize = 13;
+    const metaY = Math.max(metaFontSize, height - Math.max(settings.pagePaddingY / 2, metaFontSize));
     const metaGap = 12;
     ctx.textBaseline = "middle";
-    ctx.font = `13px ${settings.fontFamily}`;
+    ctx.font = `${metaFontSize}px ${settings.fontFamily}`;
     ctx.fillStyle = "#666";
     const rightW = ctx.measureText(pageLabel).width;
     const rightX = textLeft + textWidth;
@@ -2227,7 +2263,10 @@
     const prevBodyOverflow = bodyEl.style.overflow;
     rootEl.style.overflow = "hidden";
     bodyEl.style.overflow = "hidden";
+    const eventAc = new AbortController();
+    const eventSignal = eventAc.signal;
     const restorePageScroll = () => {
+      eventAc.abort();
       rootEl.style.overflow = prevRootOverflow;
       bodyEl.style.overflow = prevBodyOverflow;
     };
@@ -2277,18 +2316,18 @@
     sourceWebOption.textContent = "Web Font";
     selectFontSource.appendChild(sourceWebOption);
     selectFontSource.value = "local";
+    const fontDetectCanvas = document.createElement("canvas");
+    const fontDetectCtx = fontDetectCanvas.getContext("2d");
     function isFontFamilyLikelyAvailable(family) {
-      const canvasEl = document.createElement("canvas");
-      const ctx = canvasEl.getContext("2d");
-      if (!ctx) return false;
+      if (!fontDetectCtx) return false;
       const text = "abcdefghijklmnopqrstuvwxyz0123456789\u4E00\u4E8C\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341";
       const baseFamilies = ["monospace", "serif", "sans-serif"];
       const baseWidths = baseFamilies.map((base) => {
-        ctx.font = `72px ${base}`;
-        return ctx.measureText(text).width;
+        fontDetectCtx.font = `72px ${base}`;
+        return fontDetectCtx.measureText(text).width;
       });
-      ctx.font = `72px "${family}", monospace`;
-      const testWidth = ctx.measureText(text).width;
+      fontDetectCtx.font = `72px "${family}", monospace`;
+      const testWidth = fontDetectCtx.measureText(text).width;
       return !baseWidths.some((w) => Math.abs(testWidth - w) < 0.01);
     }
     function isAnyFontFamilyAvailable(families) {
@@ -2340,6 +2379,7 @@
       fontSource = "web";
       syncFontSourceUi();
       updateReaderSettingsUi();
+      clearCharWidthCache();
       lastCanvasW = -1;
       lastCanvasH = -1;
       render();
@@ -2582,6 +2622,14 @@
         window.alert("\u5132\u5B58\u8A2D\u5B9A\u6A94\u5931\u6557");
       }
     }
+    function safeNum(v) {
+      return typeof v === "number" && Number.isFinite(v) ? v : null;
+    }
+    function clampSetting(key, raw) {
+      if (raw === null) return null;
+      const lim = readerLimits[key];
+      return clamp(roundByStep(raw, lim.step), lim.min, lim.max);
+    }
     function loadSavedReaderProfile() {
       try {
         const raw = window.localStorage.getItem(READER_PROFILE_STORAGE_KEY);
@@ -2591,41 +2639,35 @@
           updateProfileUi();
           return false;
         }
-        const parsed = JSON.parse(raw);
+        const p = JSON.parse(raw);
         let changed = false;
-        if (typeof parsed.fontFamily === "string" && parsed.fontFamily.trim().length > 0) {
-          if (currentReaderSettings.fontFamily !== parsed.fontFamily) {
-            currentReaderSettings.fontFamily = parsed.fontFamily;
-            changed = true;
-          }
+        const pFontFamily = typeof p.fontFamily === "string" && p.fontFamily.trim() ? p.fontFamily : null;
+        if (pFontFamily && currentReaderSettings.fontFamily !== pFontFamily) {
+          currentReaderSettings.fontFamily = pFontFamily;
+          changed = true;
         }
         for (const key of Object.keys(readerLimits)) {
-          const nextRaw = parsed[key];
-          if (!Number.isFinite(nextRaw)) continue;
-          const limits = readerLimits[key];
-          const next = clamp(roundByStep(nextRaw, limits.step), limits.min, limits.max);
-          if (currentReaderSettings[key] === next) continue;
+          const next = clampSetting(key, safeNum(p[key]));
+          if (next === null || currentReaderSettings[key] === next) continue;
           currentReaderSettings[key] = next;
           changed = true;
         }
-        if (typeof parsed.removeSingleEmptyParagraph === "boolean") {
-          const nextRemoveSingleEmptyParagraph = parsed.removeSingleEmptyParagraph;
-          if (removeSingleEmptyParagraph !== nextRemoveSingleEmptyParagraph) {
-            removeSingleEmptyParagraph = nextRemoveSingleEmptyParagraph;
-            updateRemoveSingleEmptyParagraphUi();
-            pagedBlocks = applyEmptyParagraphFilter(blocks);
-            changed = true;
-          }
+        const pRemove = typeof p.removeSingleEmptyParagraph === "boolean" ? p.removeSingleEmptyParagraph : null;
+        if (pRemove !== null && removeSingleEmptyParagraph !== pRemove) {
+          removeSingleEmptyParagraph = pRemove;
+          updateRemoveSingleEmptyParagraphUi();
+          pagedBlocks = applyEmptyParagraphFilter(blocks);
+          changed = true;
         }
         savedProfile = {
-          fontFamily: typeof parsed.fontFamily === "string" && parsed.fontFamily.trim().length > 0 ? parsed.fontFamily : currentReaderSettings.fontFamily,
-          fontSize: Number.isFinite(parsed.fontSize) ? clamp(roundByStep(parsed.fontSize, readerLimits.fontSize.step), readerLimits.fontSize.min, readerLimits.fontSize.max) : currentReaderSettings.fontSize,
-          lineHeight: Number.isFinite(parsed.lineHeight) ? clamp(roundByStep(parsed.lineHeight, readerLimits.lineHeight.step), readerLimits.lineHeight.min, readerLimits.lineHeight.max) : currentReaderSettings.lineHeight,
-          paragraphSpacing: Number.isFinite(parsed.paragraphSpacing) ? clamp(roundByStep(parsed.paragraphSpacing, readerLimits.paragraphSpacing.step), readerLimits.paragraphSpacing.min, readerLimits.paragraphSpacing.max) : currentReaderSettings.paragraphSpacing,
-          pagePaddingX: Number.isFinite(parsed.pagePaddingX) ? clamp(roundByStep(parsed.pagePaddingX, readerLimits.pagePaddingX.step), readerLimits.pagePaddingX.min, readerLimits.pagePaddingX.max) : currentReaderSettings.pagePaddingX,
-          pagePaddingY: Number.isFinite(parsed.pagePaddingY) ? clamp(roundByStep(parsed.pagePaddingY, readerLimits.pagePaddingY.step), readerLimits.pagePaddingY.min, readerLimits.pagePaddingY.max) : currentReaderSettings.pagePaddingY,
-          pageMaxWidth: Number.isFinite(parsed.pageMaxWidth) ? clamp(roundByStep(parsed.pageMaxWidth, readerLimits.pageMaxWidth.step), readerLimits.pageMaxWidth.min, readerLimits.pageMaxWidth.max) : currentReaderSettings.pageMaxWidth,
-          removeSingleEmptyParagraph: typeof parsed.removeSingleEmptyParagraph === "boolean" ? parsed.removeSingleEmptyParagraph : removeSingleEmptyParagraph
+          fontFamily: pFontFamily ?? currentReaderSettings.fontFamily,
+          fontSize: clampSetting("fontSize", safeNum(p.fontSize)) ?? currentReaderSettings.fontSize,
+          lineHeight: clampSetting("lineHeight", safeNum(p.lineHeight)) ?? currentReaderSettings.lineHeight,
+          paragraphSpacing: clampSetting("paragraphSpacing", safeNum(p.paragraphSpacing)) ?? currentReaderSettings.paragraphSpacing,
+          pagePaddingX: clampSetting("pagePaddingX", safeNum(p.pagePaddingX)) ?? currentReaderSettings.pagePaddingX,
+          pagePaddingY: clampSetting("pagePaddingY", safeNum(p.pagePaddingY)) ?? currentReaderSettings.pagePaddingY,
+          pageMaxWidth: clampSetting("pageMaxWidth", safeNum(p.pageMaxWidth)) ?? currentReaderSettings.pageMaxWidth,
+          removeSingleEmptyParagraph: pRemove ?? removeSingleEmptyParagraph
         };
         hasSavedProfile = true;
         updateProfileUi();
@@ -3213,13 +3255,13 @@
         toggleFullscreen();
       }
     };
-    window.addEventListener("keydown", handleReaderHotkeys, { capture: true });
+    window.addEventListener("keydown", handleReaderHotkeys, { capture: true, signal: eventSignal });
     window.addEventListener("keyup", (e) => {
       if (!shouldInterceptReaderHotkey(e)) return;
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
-    }, { capture: true });
+    }, { capture: true, signal: eventSignal });
     btnPrevChap.addEventListener("click", () => {
       if (!chapterNav.prev) return;
       markFullscreenRestoreForNextChapterNavigation();
@@ -3256,6 +3298,7 @@
       if (!next || next === currentReaderSettings.fontFamily) return;
       currentReaderSettings.fontFamily = next;
       updateReaderSettingsUi();
+      clearCharWidthCache();
       lastCanvasW = -1;
       lastCanvasH = -1;
       render();
@@ -3308,6 +3351,7 @@
         return;
       }
       if (!changed) return;
+      clearCharWidthCache();
       lastCanvasW = -1;
       lastCanvasH = -1;
       render();
@@ -3367,11 +3411,15 @@
     syncFontSourceUi();
     updateReaderSettingsUi();
     updateResponsiveChrome();
-    readerRoot.addEventListener("pointerdown", restoreFullscreenOnFirstTap, { capture: true });
-    document.addEventListener("fullscreenchange", syncHeaderFullscreenUi);
+    readerRoot.addEventListener("pointerdown", restoreFullscreenOnFirstTap, { capture: true, signal: eventSignal });
+    document.addEventListener("fullscreenchange", syncHeaderFullscreenUi, { signal: eventSignal });
     syncHeaderFullscreenUi();
     render();
-    window.addEventListener("resize", render);
+    let resizeTimer = 0;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(render, 150);
+    }, { signal: eventSignal });
   }
   main();
 })();

@@ -1,5 +1,5 @@
 ﻿import { extractBlocksFromHtml, extractCommentBlocksFromHtml } from './extract';
-import { buildPageStarts, walkOnePage, type Cursor, type PageLayout } from './pagination';
+import { buildPageStarts, clearCharWidthCache, walkOnePage, type Cursor, type PageLayout } from './pagination';
 import {
   getAdjacentChapterHrefs,
   getChapterTitle,
@@ -203,7 +203,11 @@ function mountReader(
   rootEl.style.overflow = 'hidden';
   bodyEl.style.overflow = 'hidden';
 
+  const eventAc = new AbortController();
+  const eventSignal = eventAc.signal;
+
   const restorePageScroll = (): void => {
+    eventAc.abort();
     rootEl.style.overflow = prevRootOverflow;
     bodyEl.style.overflow = prevBodyOverflow;
   };
@@ -257,18 +261,19 @@ function mountReader(
   selectFontSource.appendChild(sourceWebOption);
   selectFontSource.value = 'local';
 
+  const fontDetectCanvas = document.createElement('canvas');
+  const fontDetectCtx = fontDetectCanvas.getContext('2d');
+
   function isFontFamilyLikelyAvailable(family: string): boolean {
-    const canvasEl = document.createElement('canvas');
-    const ctx = canvasEl.getContext('2d');
-    if (!ctx) return false;
+    if (!fontDetectCtx) return false;
     const text = 'abcdefghijklmnopqrstuvwxyz0123456789一二三四五六七八九十';
     const baseFamilies = ['monospace', 'serif', 'sans-serif'] as const;
     const baseWidths = baseFamilies.map((base) => {
-      ctx.font = `72px ${base}`;
-      return ctx.measureText(text).width;
+      fontDetectCtx.font = `72px ${base}`;
+      return fontDetectCtx.measureText(text).width;
     });
-    ctx.font = `72px "${family}", monospace`;
-    const testWidth = ctx.measureText(text).width;
+    fontDetectCtx.font = `72px "${family}", monospace`;
+    const testWidth = fontDetectCtx.measureText(text).width;
     return !baseWidths.some((w) => Math.abs(testWidth - w) < 0.01);
   }
 
@@ -327,6 +332,7 @@ function mountReader(
     fontSource = 'web';
     syncFontSourceUi();
     updateReaderSettingsUi();
+    clearCharWidthCache();
     lastCanvasW = -1;
     lastCanvasH = -1;
     render();
@@ -598,6 +604,16 @@ function mountReader(
     }
   }
 
+  function safeNum(v: unknown): number | null {
+    return typeof v === 'number' && Number.isFinite(v) ? v : null;
+  }
+
+  function clampSetting(key: keyof typeof readerLimits, raw: number | null): number | null {
+    if (raw === null) return null;
+    const lim = readerLimits[key];
+    return clamp(roundByStep(raw, lim.step), lim.min, lim.max);
+  }
+
   function loadSavedReaderProfile(): boolean {
     try {
       const raw = window.localStorage.getItem(READER_PROFILE_STORAGE_KEY);
@@ -607,49 +623,39 @@ function mountReader(
         updateProfileUi();
         return false;
       }
-      const parsed = JSON.parse(raw) as Partial<
-        Record<keyof typeof readerLimits, number> & { fontFamily: string; removeSingleEmptyParagraph: boolean }
-      >;
+      const p: Record<string, unknown> = JSON.parse(raw);
       let changed = false;
-      if (typeof parsed.fontFamily === 'string' && parsed.fontFamily.trim().length > 0) {
-        if (currentReaderSettings.fontFamily !== parsed.fontFamily) {
-          currentReaderSettings.fontFamily = parsed.fontFamily;
-          changed = true;
-        }
+
+      const pFontFamily = typeof p.fontFamily === 'string' && p.fontFamily.trim() ? p.fontFamily : null;
+      if (pFontFamily && currentReaderSettings.fontFamily !== pFontFamily) {
+        currentReaderSettings.fontFamily = pFontFamily;
+        changed = true;
       }
+
       for (const key of Object.keys(readerLimits) as (keyof typeof readerLimits)[]) {
-        const nextRaw = parsed[key];
-        if (!Number.isFinite(nextRaw)) continue;
-        const limits = readerLimits[key];
-        const next = clamp(roundByStep(nextRaw as number, limits.step), limits.min, limits.max);
-        if (currentReaderSettings[key] === next) continue;
+        const next = clampSetting(key, safeNum(p[key]));
+        if (next === null || currentReaderSettings[key] === next) continue;
         currentReaderSettings[key] = next;
         changed = true;
       }
-      if (typeof (parsed as { removeSingleEmptyParagraph?: unknown }).removeSingleEmptyParagraph === 'boolean') {
-        const nextRemoveSingleEmptyParagraph = (parsed as { removeSingleEmptyParagraph: boolean }).removeSingleEmptyParagraph;
-        if (removeSingleEmptyParagraph !== nextRemoveSingleEmptyParagraph) {
-          removeSingleEmptyParagraph = nextRemoveSingleEmptyParagraph;
-          updateRemoveSingleEmptyParagraphUi();
-          pagedBlocks = applyEmptyParagraphFilter(blocks);
-          changed = true;
-        }
+
+      const pRemove = typeof p.removeSingleEmptyParagraph === 'boolean' ? p.removeSingleEmptyParagraph : null;
+      if (pRemove !== null && removeSingleEmptyParagraph !== pRemove) {
+        removeSingleEmptyParagraph = pRemove;
+        updateRemoveSingleEmptyParagraphUi();
+        pagedBlocks = applyEmptyParagraphFilter(blocks);
+        changed = true;
       }
+
       savedProfile = {
-        fontFamily:
-          typeof parsed.fontFamily === 'string' && parsed.fontFamily.trim().length > 0
-            ? parsed.fontFamily
-            : currentReaderSettings.fontFamily,
-        fontSize: Number.isFinite(parsed.fontSize) ? clamp(roundByStep(parsed.fontSize as number, readerLimits.fontSize.step), readerLimits.fontSize.min, readerLimits.fontSize.max) : currentReaderSettings.fontSize,
-        lineHeight: Number.isFinite(parsed.lineHeight) ? clamp(roundByStep(parsed.lineHeight as number, readerLimits.lineHeight.step), readerLimits.lineHeight.min, readerLimits.lineHeight.max) : currentReaderSettings.lineHeight,
-        paragraphSpacing: Number.isFinite(parsed.paragraphSpacing) ? clamp(roundByStep(parsed.paragraphSpacing as number, readerLimits.paragraphSpacing.step), readerLimits.paragraphSpacing.min, readerLimits.paragraphSpacing.max) : currentReaderSettings.paragraphSpacing,
-        pagePaddingX: Number.isFinite(parsed.pagePaddingX) ? clamp(roundByStep(parsed.pagePaddingX as number, readerLimits.pagePaddingX.step), readerLimits.pagePaddingX.min, readerLimits.pagePaddingX.max) : currentReaderSettings.pagePaddingX,
-        pagePaddingY: Number.isFinite(parsed.pagePaddingY) ? clamp(roundByStep(parsed.pagePaddingY as number, readerLimits.pagePaddingY.step), readerLimits.pagePaddingY.min, readerLimits.pagePaddingY.max) : currentReaderSettings.pagePaddingY,
-        pageMaxWidth: Number.isFinite(parsed.pageMaxWidth) ? clamp(roundByStep(parsed.pageMaxWidth as number, readerLimits.pageMaxWidth.step), readerLimits.pageMaxWidth.min, readerLimits.pageMaxWidth.max) : currentReaderSettings.pageMaxWidth,
-        removeSingleEmptyParagraph:
-          typeof (parsed as { removeSingleEmptyParagraph?: unknown }).removeSingleEmptyParagraph === 'boolean'
-            ? (parsed as { removeSingleEmptyParagraph: boolean }).removeSingleEmptyParagraph
-            : removeSingleEmptyParagraph,
+        fontFamily: pFontFamily ?? currentReaderSettings.fontFamily,
+        fontSize: clampSetting('fontSize', safeNum(p.fontSize)) ?? currentReaderSettings.fontSize,
+        lineHeight: clampSetting('lineHeight', safeNum(p.lineHeight)) ?? currentReaderSettings.lineHeight,
+        paragraphSpacing: clampSetting('paragraphSpacing', safeNum(p.paragraphSpacing)) ?? currentReaderSettings.paragraphSpacing,
+        pagePaddingX: clampSetting('pagePaddingX', safeNum(p.pagePaddingX)) ?? currentReaderSettings.pagePaddingX,
+        pagePaddingY: clampSetting('pagePaddingY', safeNum(p.pagePaddingY)) ?? currentReaderSettings.pagePaddingY,
+        pageMaxWidth: clampSetting('pageMaxWidth', safeNum(p.pageMaxWidth)) ?? currentReaderSettings.pageMaxWidth,
+        removeSingleEmptyParagraph: pRemove ?? removeSingleEmptyParagraph,
       };
       hasSavedProfile = true;
       updateProfileUi();
@@ -1316,15 +1322,13 @@ function mountReader(
     }
   };
 
-  // Capture on window to beat site-level key handlers.
-  window.addEventListener('keydown', handleReaderHotkeys, { capture: true });
-  // Some sites bind chapter switching on keyup.
+  window.addEventListener('keydown', handleReaderHotkeys, { capture: true, signal: eventSignal });
   window.addEventListener('keyup', (e) => {
     if (!shouldInterceptReaderHotkey(e)) return;
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
-  }, { capture: true });
+  }, { capture: true, signal: eventSignal });
 
   btnPrevChap.addEventListener('click', () => {
     if (!chapterNav.prev) return;
@@ -1362,6 +1366,7 @@ function mountReader(
     if (!next || next === currentReaderSettings.fontFamily) return;
     currentReaderSettings.fontFamily = next;
     updateReaderSettingsUi();
+    clearCharWidthCache();
     lastCanvasW = -1;
     lastCanvasH = -1;
     render();
@@ -1414,6 +1419,7 @@ function mountReader(
       return;
     }
     if (!changed) return;
+    clearCharWidthCache();
     lastCanvasW = -1;
     lastCanvasH = -1;
     render();
@@ -1479,11 +1485,15 @@ function mountReader(
   syncFontSourceUi();
   updateReaderSettingsUi();
   updateResponsiveChrome();
-  readerRoot.addEventListener('pointerdown', restoreFullscreenOnFirstTap, { capture: true });
-  document.addEventListener('fullscreenchange', syncHeaderFullscreenUi);
+  readerRoot.addEventListener('pointerdown', restoreFullscreenOnFirstTap, { capture: true, signal: eventSignal });
+  document.addEventListener('fullscreenchange', syncHeaderFullscreenUi, { signal: eventSignal });
   syncHeaderFullscreenUi();
   render();
-  window.addEventListener('resize', render);
+  let resizeTimer = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(render, 150);
+  }, { signal: eventSignal });
 }
 
 main();

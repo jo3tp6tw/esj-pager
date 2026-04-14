@@ -20,12 +20,20 @@ export function getChapterTitle(): string {
   return fromDom || document.title;
 }
 
-/** 與站內「上一篇／下一篇」連結文字一致（依站方文案調整）。 */
+const PREV_LINK_TEXTS = ['上一篇', '上一章', 'Previous', 'Prev'];
+const NEXT_LINK_TEXTS = ['下一篇', '下一章', 'Next'];
+
+/** 與站內「上一篇／下一篇」連結文字一致（依站方文案調整，含 fallback）。 */
 export function getAdjacentChapterHrefs(): { prev: string; next: string } {
   const links = [...document.querySelectorAll<HTMLAnchorElement>('a')];
-  const prev = links.find((a) => a.textContent?.includes('上一篇'))?.href ?? '';
-  const next = links.find((a) => a.textContent?.includes('下一篇'))?.href ?? '';
-  return { prev, next };
+  const findByText = (candidates: string[]): string => {
+    for (const text of candidates) {
+      const match = links.find((a) => a.textContent?.includes(text));
+      if (match) return match.href;
+    }
+    return '';
+  };
+  return { prev: findByText(PREV_LINK_TEXTS), next: findByText(NEXT_LINK_TEXTS) };
 }
 
 /** 從 URL 取出小說 ID（/forum/{novelId}/{chapterId}）。 */

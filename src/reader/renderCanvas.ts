@@ -31,11 +31,12 @@ export function drawBottomMetadata(
   textLeft: number,
   textWidth: number,
 ): void {
-  const metaY = height - settings.pagePaddingY / 2;
+  const metaFontSize = 13;
+  const metaY = Math.max(metaFontSize, height - Math.max(settings.pagePaddingY / 2, metaFontSize));
   const metaGap = 12;
 
   ctx.textBaseline = 'middle';
-  ctx.font = `13px ${settings.fontFamily}`;
+  ctx.font = `${metaFontSize}px ${settings.fontFamily}`;
   ctx.fillStyle = '#666';
 
   const rightW = ctx.measureText(pageLabel).width;

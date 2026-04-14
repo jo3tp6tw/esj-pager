@@ -34,6 +34,16 @@ type BlockTextStyle = {
   fillStyle: string;
 };
 
+const COMMENT_MAIN_MIN_SIZE = 18;
+const COMMENT_MAIN_LINE_PX = 30;
+const COMMENT_MAIN_PARA_SPACING = 10;
+const COMMENT_META_MIN_SIZE = 12;
+const COMMENT_META_SCALE = 0.7;
+const COMMENT_META_LINE_PX = 22;
+const COMMENT_META_PARA_SPACING = 6;
+const COMMENT_DIVIDER_MIN_SIZE = 13;
+const COMMENT_DIVIDER_SIZE_OFFSET = 4;
+
 function getBlockTextStyle(ctx: CanvasRenderingContext2D, block: Block, layout: PageLayout): BlockTextStyle {
   const baseFont = ctx.font;
   const baseSizeRaw = Number.parseFloat(baseFont);
@@ -42,28 +52,28 @@ function getBlockTextStyle(ctx: CanvasRenderingContext2D, block: Block, layout: 
 
   if (block.type === 'commentMain') {
     return {
-      font: `${Math.max(18, Math.round(baseSize))}px ${family}`,
-      linePx: 30,
-      paraSpacing: 10,
+      font: `${Math.max(COMMENT_MAIN_MIN_SIZE, Math.round(baseSize))}px ${family}`,
+      linePx: COMMENT_MAIN_LINE_PX,
+      paraSpacing: COMMENT_MAIN_PARA_SPACING,
       fillStyle: '#111',
     };
   }
 
   if (block.type === 'commentMeta') {
-    const halfSize = Math.max(12, Math.round(baseSize * 0.7));
+    const halfSize = Math.max(COMMENT_META_MIN_SIZE, Math.round(baseSize * COMMENT_META_SCALE));
     return {
       font: `${halfSize}px ${family}`,
-      linePx: 22,
-      paraSpacing: 6,
+      linePx: COMMENT_META_LINE_PX,
+      paraSpacing: COMMENT_META_PARA_SPACING,
       fillStyle: '#999',
     };
   }
 
   if (block.type === 'commentDivider') {
     return {
-      font: `${Math.max(13, Math.round(baseSize - 4))}px ${family}`,
-      linePx: 22,
-      paraSpacing: 6,
+      font: `${Math.max(COMMENT_DIVIDER_MIN_SIZE, Math.round(baseSize - COMMENT_DIVIDER_SIZE_OFFSET))}px ${family}`,
+      linePx: COMMENT_META_LINE_PX,
+      paraSpacing: COMMENT_META_PARA_SPACING,
       fillStyle: '#111',
     };
   }
@@ -80,13 +90,37 @@ function bottomY(layout: PageLayout): number {
   return layout.padY + layout.maxHeight;
 }
 
+const charWidthCache = new Map<string, number>();
+
+function measureCharWidth(ctx: CanvasRenderingContext2D, ch: string): number {
+  const key = `${ctx.font}\0${ch}`;
+  let w = charWidthCache.get(key);
+  if (w === undefined) {
+    w = ctx.measureText(ch).width;
+    charWidthCache.set(key, w);
+  }
+  return w;
+}
+
+/** Call when font settings change to free stale measurements. */
+export function clearCharWidthCache(): void {
+  charWidthCache.clear();
+}
+
+let dividerCache: { font: string; maxWidth: number; line: string } | null = null;
+
 function buildDividerLine(ctx: CanvasRenderingContext2D, maxWidth: number): string {
   if (maxWidth <= 0) return '─';
+  if (dividerCache && dividerCache.font === ctx.font && dividerCache.maxWidth === maxWidth) {
+    return dividerCache.line;
+  }
   const unit = '─';
   const unitWidth = ctx.measureText(unit).width;
   if (unitWidth <= 0) return unit;
   const count = Math.max(1, Math.floor(maxWidth / unitWidth));
-  return unit.repeat(count);
+  const line = unit.repeat(count);
+  dividerCache = { font: ctx.font, maxWidth, line };
+  return line;
 }
 
 /** 由游標起算畫滿一頁；`draw===true` 時實際繪製。回傳下一頁起始游標，若本章已結束則 `null`。 */
@@ -238,7 +272,7 @@ export function wrapByChar(ctx: CanvasRenderingContext2D, text: string, maxWidth
   let width = 0;
 
   for (const ch of text) {
-    const chWidth = ctx.measureText(ch).width;
+    const chWidth = measureCharWidth(ctx, ch);
     if (line && width + chWidth > maxWidth) {
       lines.push(line);
       line = ch;
