@@ -6,10 +6,12 @@
   "type": "module",
   "scripts": {
     "build": "node esbuild.config.mjs",
-    "watch": "node esbuild.config.mjs --watch"
+    "watch": "node esbuild.config.mjs --watch",
+    "serve": "http-server dist -p 8080 --cors -a 0.0.0.0"
   },
   "devDependencies": {
     "esbuild": "^0.25.0",
+    "http-server": "^14.1.1",
     "typescript": "^5.7.0"
   },
   "dependencies": {

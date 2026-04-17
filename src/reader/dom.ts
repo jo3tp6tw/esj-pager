@@ -81,7 +81,10 @@ export type ReaderDomRefs = {
   inputWebFontCssUrl: HTMLInputElement;
   inputWebFontFamily: HTMLInputElement;
   btnApplyWebFont: HTMLButtonElement;
-  readerRemoveSingleEmptyValue: HTMLSpanElement;
+  btnRemoveSingleEmptyToggle: HTMLButtonElement;
+  iconRemoveSingleEmptyCheckEl: SVGElement;
+  btnFullscreenPromptToggle: HTMLButtonElement;
+  iconFullscreenPromptCheckEl: SVGElement;
   readerAdjustOverlay: HTMLDivElement;
   readerAdjustBackdrop: HTMLDivElement;
   readerAdjustPanel: HTMLDivElement;
@@ -109,9 +112,8 @@ export type ReaderDomRefs = {
   btnReaderAdjustPageMaxWidthDec: HTMLButtonElement;
   rangeReaderAdjustPageMaxWidth: HTMLInputElement;
   btnReaderAdjustPageMaxWidthInc: HTMLButtonElement;
-  btnReaderAdjustRemoveSingleEmpty: HTMLButtonElement;
+  btnReaderAdjustCancel: HTMLButtonElement;
   btnReaderAdjustApply: HTMLButtonElement;
-  iconReaderAdjustRemoveSingleEmptyCheckEl: SVGElement;
   pageJumpOverlay: HTMLDivElement;
   pageJumpBackdrop: HTMLDivElement;
   pageJumpPanel: HTMLDivElement;
@@ -119,6 +121,11 @@ export type ReaderDomRefs = {
   pageJumpTotalEl: HTMLSpanElement;
   pageJumpCancel: HTMLButtonElement;
   pageJumpOk: HTMLButtonElement;
+  fullscreenPromptOverlay: HTMLDivElement;
+  fullscreenPromptBackdrop: HTMLDivElement;
+  fullscreenPromptPanel: HTMLDivElement;
+  btnFullscreenPromptCancel: HTMLButtonElement;
+  btnFullscreenPromptConfirm: HTMLButtonElement;
 };
 
 export function createReaderDom(
@@ -287,23 +294,6 @@ export function createReaderDom(
   readerSettingsContent.appendChild(pagePaddingRow.row);
   readerSettingsContent.appendChild(pagePaddingYRow.row);
   readerSettingsContent.appendChild(pageMaxWidthRow.row);
-
-  const removeSingleEmptyRow = document.createElement('div');
-  removeSingleEmptyRow.className = 'esj-setting-toggle-row';
-
-  const removeSingleEmptyLabel = document.createElement('div');
-  removeSingleEmptyLabel.className = 'esj-setting-label';
-  const removeSingleEmptyLabelText = document.createElement('span');
-  removeSingleEmptyLabelText.textContent = '去除空段落';
-  removeSingleEmptyLabel.appendChild(removeSingleEmptyLabelText);
-
-  const readerRemoveSingleEmptyValue = document.createElement('span');
-  readerRemoveSingleEmptyValue.className = 'esj-setting-value esj-setting-onoff';
-  readerRemoveSingleEmptyValue.textContent = 'OFF';
-
-  removeSingleEmptyRow.appendChild(removeSingleEmptyLabel);
-  removeSingleEmptyRow.appendChild(readerRemoveSingleEmptyValue);
-  readerSettingsContent.appendChild(removeSingleEmptyRow);
   readerSettingsSection.appendChild(readerSettingsContent);
 
   const profileSection = document.createElement('section');
@@ -482,6 +472,66 @@ export function createReaderDom(
   fontWebControls.appendChild(btnApplyWebFont);
   fontSection.appendChild(fontWebControls);
   readerSettingsSection.appendChild(fontSection);
+  
+  const otherSettingsSection = document.createElement('section');
+  otherSettingsSection.className = 'esj-drawer-other-settings';
+  otherSettingsSection.setAttribute('aria-label', '其他設定');
+  const otherSettingsTitle = document.createElement('div');
+  otherSettingsTitle.className = 'esj-drawer-reader-settings-title';
+  otherSettingsTitle.textContent = '其他設定';
+  
+  const fullscreenPromptRow = document.createElement('div');
+  fullscreenPromptRow.className = 'esj-setting-row esj-setting-checkbox-row';
+  const fullscreenPromptLabel = document.createElement('div');
+  fullscreenPromptLabel.className = 'esj-setting-label';
+  const fullscreenPromptLabelText = document.createElement('span');
+  fullscreenPromptLabelText.textContent = '全螢幕提示';
+  fullscreenPromptLabel.appendChild(fullscreenPromptLabelText);
+  
+  const btnFullscreenPromptToggle = document.createElement('button');
+  btnFullscreenPromptToggle.type = 'button';
+  btnFullscreenPromptToggle.className = 'esj-setting-btn esj-setting-checkbox-btn';
+  btnFullscreenPromptToggle.setAttribute('aria-label', '全螢幕提示');
+  btnFullscreenPromptToggle.setAttribute('aria-pressed', 'true');
+  const iconFullscreenPromptCheckEl = iconCheck(18);
+  btnFullscreenPromptToggle.appendChild(iconFullscreenPromptCheckEl);
+  
+  const fullscreenPromptControls = document.createElement('div');
+  fullscreenPromptControls.className = 'esj-setting-controls';
+  fullscreenPromptControls.appendChild(btnFullscreenPromptToggle);
+  
+  fullscreenPromptRow.appendChild(fullscreenPromptLabel);
+  fullscreenPromptRow.appendChild(fullscreenPromptControls);
+  otherSettingsSection.appendChild(otherSettingsTitle);
+  
+  const removeSingleEmptyRow = document.createElement('div');
+  removeSingleEmptyRow.className = 'esj-setting-row esj-setting-checkbox-row';
+  const removeSingleEmptyLabel = document.createElement('div');
+  removeSingleEmptyLabel.className = 'esj-setting-label';
+  const removeSingleEmptyLabelText = document.createElement('span');
+  removeSingleEmptyLabelText.textContent = '去除空段落';
+  removeSingleEmptyLabel.appendChild(removeSingleEmptyLabelText);
+  
+  const btnRemoveSingleEmptyToggle = document.createElement('button');
+  btnRemoveSingleEmptyToggle.type = 'button';
+  btnRemoveSingleEmptyToggle.className = 'esj-setting-btn esj-setting-checkbox-btn';
+  btnRemoveSingleEmptyToggle.setAttribute('aria-label', '去除空段落');
+  btnRemoveSingleEmptyToggle.setAttribute('aria-pressed', 'false');
+  const iconRemoveSingleEmptyCheckEl = iconCheck(18);
+  iconRemoveSingleEmptyCheckEl.style.display = 'none';
+  btnRemoveSingleEmptyToggle.appendChild(iconRemoveSingleEmptyCheckEl);
+  
+  const removeSingleEmptyControls = document.createElement('div');
+  removeSingleEmptyControls.className = 'esj-setting-controls';
+  removeSingleEmptyControls.appendChild(btnRemoveSingleEmptyToggle);
+  
+  removeSingleEmptyRow.appendChild(removeSingleEmptyLabel);
+  removeSingleEmptyRow.appendChild(removeSingleEmptyControls);
+  otherSettingsSection.appendChild(removeSingleEmptyRow);
+  
+  otherSettingsSection.appendChild(fullscreenPromptRow);
+  readerSettingsSection.appendChild(otherSettingsSection);
+  
   drawerPanel.appendChild(readerSettingsSection);
 
   drawerOverlay.appendChild(drawerBackdrop);
@@ -666,33 +716,17 @@ export function createReaderDom(
   readerAdjustPanel.appendChild(adjustPagePaddingXRow.row);
   readerAdjustPanel.appendChild(adjustPagePaddingYRow.row);
   readerAdjustPanel.appendChild(adjustPageMaxWidthRow.row);
-  const readerAdjustRemoveSingleEmptyRow = document.createElement('div');
-  readerAdjustRemoveSingleEmptyRow.className = 'esj-reader-adjust-item';
-  const readerAdjustRemoveSingleEmptyLabel = document.createElement('div');
-  readerAdjustRemoveSingleEmptyLabel.className = 'esj-reader-adjust-item-label';
-  const readerAdjustRemoveSingleEmptyLabelText = document.createElement('span');
-  readerAdjustRemoveSingleEmptyLabelText.textContent = '去除空段落';
-  readerAdjustRemoveSingleEmptyLabel.appendChild(readerAdjustRemoveSingleEmptyLabelText);
-  const readerAdjustRemoveSingleEmptyBtn = document.createElement('button');
-  readerAdjustRemoveSingleEmptyBtn.type = 'button';
-  readerAdjustRemoveSingleEmptyBtn.className = 'esj-reader-adjust-btn esj-reader-adjust-toggle-btn';
-  readerAdjustRemoveSingleEmptyBtn.setAttribute('aria-label', '去除空段落');
-  readerAdjustRemoveSingleEmptyBtn.setAttribute('aria-pressed', 'false');
-  const iconReaderAdjustRemoveSingleEmptyCheckEl = iconCheck(18);
-  iconReaderAdjustRemoveSingleEmptyCheckEl.style.display = 'none';
-  readerAdjustRemoveSingleEmptyBtn.appendChild(iconReaderAdjustRemoveSingleEmptyCheckEl);
-  const readerAdjustRemoveSingleEmptyControls = document.createElement('div');
-  readerAdjustRemoveSingleEmptyControls.className = 'esj-reader-adjust-row';
-  readerAdjustRemoveSingleEmptyControls.appendChild(readerAdjustRemoveSingleEmptyBtn);
-  readerAdjustRemoveSingleEmptyRow.appendChild(readerAdjustRemoveSingleEmptyLabel);
-  readerAdjustRemoveSingleEmptyRow.appendChild(readerAdjustRemoveSingleEmptyControls);
-  readerAdjustPanel.appendChild(readerAdjustRemoveSingleEmptyRow);
   const readerAdjustActions = document.createElement('div');
   readerAdjustActions.className = 'esj-reader-adjust-actions';
+  const btnReaderAdjustCancel = document.createElement('button');
+  btnReaderAdjustCancel.type = 'button';
+  btnReaderAdjustCancel.id = 'esj-reader-adjust-cancel';
+  btnReaderAdjustCancel.textContent = '取消';
   const btnReaderAdjustApply = document.createElement('button');
   btnReaderAdjustApply.type = 'button';
   btnReaderAdjustApply.id = 'esj-reader-adjust-apply';
   btnReaderAdjustApply.textContent = '確定';
+  readerAdjustActions.appendChild(btnReaderAdjustCancel);
   readerAdjustActions.appendChild(btnReaderAdjustApply);
   readerAdjustPanel.appendChild(readerAdjustActions);
   readerAdjustOverlay.appendChild(readerAdjustBackdrop);
@@ -757,12 +791,56 @@ export function createReaderDom(
   pageJumpOverlay.appendChild(pageJumpBackdrop);
   pageJumpOverlay.appendChild(pageJumpPanel);
 
+  const fullscreenPromptOverlay = document.createElement('div');
+  fullscreenPromptOverlay.id = 'esj-fullscreen-prompt-overlay';
+  fullscreenPromptOverlay.setAttribute('role', 'dialog');
+  fullscreenPromptOverlay.setAttribute('aria-modal', 'true');
+  fullscreenPromptOverlay.setAttribute('aria-hidden', 'true');
+
+  const fullscreenPromptBackdrop = document.createElement('div');
+  fullscreenPromptBackdrop.className = 'esj-fullscreen-prompt-backdrop';
+
+  const fullscreenPromptPanel = document.createElement('div');
+  fullscreenPromptPanel.className = 'esj-fullscreen-prompt-panel';
+
+  const fullscreenPromptTitle = document.createElement('div');
+  fullscreenPromptTitle.className = 'esj-fullscreen-prompt-title';
+  fullscreenPromptTitle.textContent = '進入全螢幕模式？';
+
+  const fullscreenPromptMessage = document.createElement('div');
+  fullscreenPromptMessage.className = 'esj-fullscreen-prompt-message';
+  fullscreenPromptMessage.textContent = '全螢幕模式可提供更好的閱讀體驗';
+
+  const fullscreenPromptActions = document.createElement('div');
+  fullscreenPromptActions.className = 'esj-fullscreen-prompt-actions';
+
+  const btnFullscreenPromptCancel = document.createElement('button');
+  btnFullscreenPromptCancel.type = 'button';
+  btnFullscreenPromptCancel.id = 'esj-fullscreen-prompt-cancel';
+  btnFullscreenPromptCancel.textContent = '取消';
+
+  const btnFullscreenPromptConfirm = document.createElement('button');
+  btnFullscreenPromptConfirm.type = 'button';
+  btnFullscreenPromptConfirm.id = 'esj-fullscreen-prompt-confirm';
+  btnFullscreenPromptConfirm.textContent = '確定';
+
+  fullscreenPromptActions.appendChild(btnFullscreenPromptCancel);
+  fullscreenPromptActions.appendChild(btnFullscreenPromptConfirm);
+
+  fullscreenPromptPanel.appendChild(fullscreenPromptTitle);
+  fullscreenPromptPanel.appendChild(fullscreenPromptMessage);
+  fullscreenPromptPanel.appendChild(fullscreenPromptActions);
+
+  fullscreenPromptOverlay.appendChild(fullscreenPromptBackdrop);
+  fullscreenPromptOverlay.appendChild(fullscreenPromptPanel);
+
   readerRoot.appendChild(canvasWrap);
   readerRoot.appendChild(header);
   readerRoot.appendChild(footer);
   readerRoot.appendChild(drawerOverlay);
   readerRoot.appendChild(readerAdjustOverlay);
   readerRoot.appendChild(pageJumpOverlay);
+  readerRoot.appendChild(fullscreenPromptOverlay);
 
   return {
     style,
@@ -826,7 +904,10 @@ export function createReaderDom(
     inputWebFontCssUrl,
     inputWebFontFamily,
     btnApplyWebFont,
-    readerRemoveSingleEmptyValue,
+    btnRemoveSingleEmptyToggle,
+    iconRemoveSingleEmptyCheckEl,
+    btnFullscreenPromptToggle,
+    iconFullscreenPromptCheckEl,
     readerAdjustOverlay,
     readerAdjustBackdrop,
     readerAdjustPanel,
@@ -854,9 +935,8 @@ export function createReaderDom(
     btnReaderAdjustPageMaxWidthDec: adjustPageMaxWidthRow.decBtn,
     rangeReaderAdjustPageMaxWidth: adjustPageMaxWidthRow.rangeEl,
     btnReaderAdjustPageMaxWidthInc: adjustPageMaxWidthRow.incBtn,
-    btnReaderAdjustRemoveSingleEmpty: readerAdjustRemoveSingleEmptyBtn,
+    btnReaderAdjustCancel,
     btnReaderAdjustApply,
-    iconReaderAdjustRemoveSingleEmptyCheckEl,
     pageJumpOverlay,
     pageJumpBackdrop,
     pageJumpPanel,
@@ -864,5 +944,10 @@ export function createReaderDom(
     pageJumpTotalEl,
     pageJumpCancel,
     pageJumpOk,
+    fullscreenPromptOverlay,
+    fullscreenPromptBackdrop,
+    fullscreenPromptPanel,
+    btnFullscreenPromptCancel,
+    btnFullscreenPromptConfirm,
   };
 }

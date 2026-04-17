@@ -303,6 +303,41 @@
       padding: 8px 4px 0;
     }
 
+    .esj-drawer-other-settings {
+      border-top: 1px solid #ececec;
+      margin-top: 4px;
+      padding: 8px 4px 0;
+    }
+
+    .esj-setting-checkbox-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 2px;
+      margin-top: 0;
+    }
+
+    .esj-setting-checkbox-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .esj-setting-checkbox-btn[aria-pressed="true"] {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+    }
+
     .esj-setting-select {
       min-width: 160px;
       max-width: 190px;
@@ -491,18 +526,25 @@
 
     .esj-reader-adjust-actions {
       display: flex;
+      gap: 10px;
       justify-content: flex-end;
       margin-top: 4px;
     }
 
-    #esj-reader-adjust-apply {
+    .esj-reader-adjust-actions button {
       padding: 8px 16px;
       font-size: 15px;
-      border: 1px solid #111;
+      border: 1px solid #aaa;
       border-radius: 6px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+    }
+
+    #esj-reader-adjust-apply {
       background: #111;
       color: #fff;
-      cursor: pointer;
+      border-color: #111;
     }
 
     .esj-setting-toggle-icon {
@@ -743,6 +785,78 @@
     }
 
     .esj-page-jump-actions button[type="button"]:last-child {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    #esj-fullscreen-prompt-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #esj-fullscreen-prompt-overlay[aria-hidden="false"] {
+      display: flex;
+    }
+
+    .esj-fullscreen-prompt-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .esj-fullscreen-prompt-panel {
+      position: relative;
+      z-index: 1;
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 90%;
+      width: 320px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .esj-fullscreen-prompt-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 12px;
+    }
+
+    .esj-fullscreen-prompt-message {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .esj-fullscreen-prompt-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .esj-fullscreen-prompt-actions button {
+      padding: 10px 20px;
+      font-size: 15px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+    }
+
+    #esj-fullscreen-prompt-confirm {
       background: #111;
       color: #fff;
       border-color: #111;

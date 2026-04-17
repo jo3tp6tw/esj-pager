@@ -55,7 +55,7 @@ main.ts ──→ readerState.ts ──→ reader/settings.ts
 
 `mountReader` 內使用 `ReaderState` 物件（`createReaderState()` 建立）統一管理閱讀器執行期狀態，包含：
 
-- 分頁資訊（`pageStarts`、`pageIndex`、`pendingRestorePageIndex`）
+- 分頁資訊（`pageStarts`、`pageIndex`、`pendingRestoreCursor`）
 - Canvas 尺寸快取（`lastCanvasW`、`lastCanvasH`）
 - Chrome/UI 狀態（`chromeVisible`、`activeChromePreset`、`readerSettingsExpanded` 等）
 - 手勢追蹤（`swipeStartX`、`swipeStartY`、`suppressNextSideTap`）
@@ -88,6 +88,10 @@ main.ts ──→ readerState.ts ──→ reader/settings.ts
 - `resize` 事件 debounce 150ms，避免連續觸發重排。
 - 字體偵測共用單一離屏 canvas（`fonts.ts` 模組作用域分配），不重複建立。
 - 字體變更時清除字元寬度快取（`clearCharWidthCache`）。
+- **全螢幕與背景切換優化**：
+  - 監聽 `fullscreenchange` 和 `visibilitychange` 事件
+  - 狀態改變時記錄當前 Cursor，重新計算後恢復到相同內容位置
+  - 避免背景切換導致的佈局錯誤
 
 ### 圖片頁處理
 
@@ -143,9 +147,15 @@ main.ts ──→ readerState.ts ──→ reader/settings.ts
 | Key | Storage | 說明 |
 |-----|---------|------|
 | `esj-pager:reader-profile:v1` | local | 閱讀參數（含 fontFamily）與「去除空段落」開關 |
-| `esj-pager:last-page:v2` | local | 以 novelId 為鍵的 LRU 陣列（最多 10 部小說），記錄 chapter + 頁碼 |
+| `esj-pager:last-page:v3` | local | 以 novelId 為鍵的 LRU 陣列（最多 10 部小說），記錄 chapter + **Cursor**（內容位置） |
 | `esj-pager:web-font:v1` | local | 最近一次 Web Font CSS URL + family |
 | `esj-pager:restore-fullscreen-once:v1` | session | 跨章導頁後第一次點擊嘗試恢復全螢幕 |
+
+**Cursor 記憶機制**：
+- 不再記錄頁碼（因為視窗尺寸改變會導致總頁數變化）
+- 改為記錄 `Cursor`（`{ bi: number, off: number }`），表示內容的絕對位置
+- 重新計算分頁後，使用 `findPageIndexByCursor` 找到包含該 Cursor 的頁面
+- 確保無論視窗尺寸如何改變，都能回到相同的內容位置
 
 ### 章節導航
 

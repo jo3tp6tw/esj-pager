@@ -32,7 +32,7 @@ export type WebFontConfig = {
 export type LastPageEntry = {
   novelId: string;
   chapter: string;
-  page: number;
+  cursor: Cursor;
   ts: number;
 };
 
@@ -61,19 +61,20 @@ export type ReaderState = {
   swipeStartY: number | null;
   suppressNextSideTap: boolean;
   removeSingleEmptyParagraph: boolean;
+  showFullscreenPrompt: boolean;
   pagedBlocks: Block[];
   currentReaderSettings: ReaderSettings;
-  pendingRestorePageIndex: number | null;
-  lastSavedPageIndex: number;
+  pendingRestoreCursor: Cursor | null;
+  lastSavedCursor: Cursor | null;
   hasSavedProfile: boolean;
   readerSettingsExpanded: boolean;
   profileExpanded: boolean;
   savedProfile: ReaderProfile | null;
   imageCache: Map<string, ImageCacheEntry>;
   lastRenderedPageIndex: number;
-  shouldRestoreFullscreenOnNextTap: boolean;
   adjustAnchorCursor: Cursor | null;
   previewFromAdjust: boolean;
+  snapshotBeforeAdjust: ReaderSettings | null;
   fontSource: 'local' | 'web';
   webFontLinkEl: HTMLLinkElement | null;
 };
@@ -91,19 +92,20 @@ export function createReaderState(blocks: Block[]): ReaderState {
     swipeStartY: null,
     suppressNextSideTap: false,
     removeSingleEmptyParagraph: false,
+    showFullscreenPrompt: true,
     pagedBlocks: blocks,
     currentReaderSettings: { ...readerSettings },
-    pendingRestorePageIndex: null,
-    lastSavedPageIndex: -1,
+    pendingRestoreCursor: null,
+    lastSavedCursor: null,
     hasSavedProfile: false,
     readerSettingsExpanded: false,
     profileExpanded: false,
     savedProfile: null,
     imageCache: new Map(),
     lastRenderedPageIndex: -1,
-    shouldRestoreFullscreenOnNextTap: false,
     adjustAnchorCursor: null,
     previewFromAdjust: false,
+    snapshotBeforeAdjust: null,
     fontSource: 'local',
     webFontLinkEl: null,
   };

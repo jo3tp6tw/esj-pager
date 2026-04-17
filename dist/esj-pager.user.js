@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ESJ Zone 翻頁閱讀
 // @namespace    https://github.com/jo3tp6tw/esj-pager
-// @version      0.1.1
+// @version      2.1
 // @description  將 ESJ Zone 閱讀改為翻頁模式
 // @author       jo3tp6tw
 // @homepageURL  https://github.com/jo3tp6tw/esj-pager
@@ -749,19 +749,6 @@
     readerSettingsContent.appendChild(pagePaddingRow.row);
     readerSettingsContent.appendChild(pagePaddingYRow.row);
     readerSettingsContent.appendChild(pageMaxWidthRow.row);
-    const removeSingleEmptyRow = document.createElement("div");
-    removeSingleEmptyRow.className = "esj-setting-toggle-row";
-    const removeSingleEmptyLabel = document.createElement("div");
-    removeSingleEmptyLabel.className = "esj-setting-label";
-    const removeSingleEmptyLabelText = document.createElement("span");
-    removeSingleEmptyLabelText.textContent = "\u53BB\u9664\u7A7A\u6BB5\u843D";
-    removeSingleEmptyLabel.appendChild(removeSingleEmptyLabelText);
-    const readerRemoveSingleEmptyValue = document.createElement("span");
-    readerRemoveSingleEmptyValue.className = "esj-setting-value esj-setting-onoff";
-    readerRemoveSingleEmptyValue.textContent = "OFF";
-    removeSingleEmptyRow.appendChild(removeSingleEmptyLabel);
-    removeSingleEmptyRow.appendChild(readerRemoveSingleEmptyValue);
-    readerSettingsContent.appendChild(removeSingleEmptyRow);
     readerSettingsSection.appendChild(readerSettingsContent);
     const profileSection = document.createElement("section");
     profileSection.className = "esj-drawer-profile-section";
@@ -928,6 +915,55 @@
     fontWebControls.appendChild(btnApplyWebFont);
     fontSection.appendChild(fontWebControls);
     readerSettingsSection.appendChild(fontSection);
+    const otherSettingsSection = document.createElement("section");
+    otherSettingsSection.className = "esj-drawer-other-settings";
+    otherSettingsSection.setAttribute("aria-label", "\u5176\u4ED6\u8A2D\u5B9A");
+    const otherSettingsTitle = document.createElement("div");
+    otherSettingsTitle.className = "esj-drawer-reader-settings-title";
+    otherSettingsTitle.textContent = "\u5176\u4ED6\u8A2D\u5B9A";
+    const fullscreenPromptRow = document.createElement("div");
+    fullscreenPromptRow.className = "esj-setting-row esj-setting-checkbox-row";
+    const fullscreenPromptLabel = document.createElement("div");
+    fullscreenPromptLabel.className = "esj-setting-label";
+    const fullscreenPromptLabelText = document.createElement("span");
+    fullscreenPromptLabelText.textContent = "\u5168\u87A2\u5E55\u63D0\u793A";
+    fullscreenPromptLabel.appendChild(fullscreenPromptLabelText);
+    const btnFullscreenPromptToggle = document.createElement("button");
+    btnFullscreenPromptToggle.type = "button";
+    btnFullscreenPromptToggle.className = "esj-setting-btn esj-setting-checkbox-btn";
+    btnFullscreenPromptToggle.setAttribute("aria-label", "\u5168\u87A2\u5E55\u63D0\u793A");
+    btnFullscreenPromptToggle.setAttribute("aria-pressed", "true");
+    const iconFullscreenPromptCheckEl = iconCheck(18);
+    btnFullscreenPromptToggle.appendChild(iconFullscreenPromptCheckEl);
+    const fullscreenPromptControls = document.createElement("div");
+    fullscreenPromptControls.className = "esj-setting-controls";
+    fullscreenPromptControls.appendChild(btnFullscreenPromptToggle);
+    fullscreenPromptRow.appendChild(fullscreenPromptLabel);
+    fullscreenPromptRow.appendChild(fullscreenPromptControls);
+    otherSettingsSection.appendChild(otherSettingsTitle);
+    const removeSingleEmptyRow = document.createElement("div");
+    removeSingleEmptyRow.className = "esj-setting-row esj-setting-checkbox-row";
+    const removeSingleEmptyLabel = document.createElement("div");
+    removeSingleEmptyLabel.className = "esj-setting-label";
+    const removeSingleEmptyLabelText = document.createElement("span");
+    removeSingleEmptyLabelText.textContent = "\u53BB\u9664\u7A7A\u6BB5\u843D";
+    removeSingleEmptyLabel.appendChild(removeSingleEmptyLabelText);
+    const btnRemoveSingleEmptyToggle = document.createElement("button");
+    btnRemoveSingleEmptyToggle.type = "button";
+    btnRemoveSingleEmptyToggle.className = "esj-setting-btn esj-setting-checkbox-btn";
+    btnRemoveSingleEmptyToggle.setAttribute("aria-label", "\u53BB\u9664\u7A7A\u6BB5\u843D");
+    btnRemoveSingleEmptyToggle.setAttribute("aria-pressed", "false");
+    const iconRemoveSingleEmptyCheckEl = iconCheck(18);
+    iconRemoveSingleEmptyCheckEl.style.display = "none";
+    btnRemoveSingleEmptyToggle.appendChild(iconRemoveSingleEmptyCheckEl);
+    const removeSingleEmptyControls = document.createElement("div");
+    removeSingleEmptyControls.className = "esj-setting-controls";
+    removeSingleEmptyControls.appendChild(btnRemoveSingleEmptyToggle);
+    removeSingleEmptyRow.appendChild(removeSingleEmptyLabel);
+    removeSingleEmptyRow.appendChild(removeSingleEmptyControls);
+    otherSettingsSection.appendChild(removeSingleEmptyRow);
+    otherSettingsSection.appendChild(fullscreenPromptRow);
+    readerSettingsSection.appendChild(otherSettingsSection);
     drawerPanel.appendChild(readerSettingsSection);
     drawerOverlay.appendChild(drawerBackdrop);
     drawerOverlay.appendChild(drawerPanel);
@@ -1081,33 +1117,17 @@
     readerAdjustPanel.appendChild(adjustPagePaddingXRow.row);
     readerAdjustPanel.appendChild(adjustPagePaddingYRow.row);
     readerAdjustPanel.appendChild(adjustPageMaxWidthRow.row);
-    const readerAdjustRemoveSingleEmptyRow = document.createElement("div");
-    readerAdjustRemoveSingleEmptyRow.className = "esj-reader-adjust-item";
-    const readerAdjustRemoveSingleEmptyLabel = document.createElement("div");
-    readerAdjustRemoveSingleEmptyLabel.className = "esj-reader-adjust-item-label";
-    const readerAdjustRemoveSingleEmptyLabelText = document.createElement("span");
-    readerAdjustRemoveSingleEmptyLabelText.textContent = "\u53BB\u9664\u7A7A\u6BB5\u843D";
-    readerAdjustRemoveSingleEmptyLabel.appendChild(readerAdjustRemoveSingleEmptyLabelText);
-    const readerAdjustRemoveSingleEmptyBtn = document.createElement("button");
-    readerAdjustRemoveSingleEmptyBtn.type = "button";
-    readerAdjustRemoveSingleEmptyBtn.className = "esj-reader-adjust-btn esj-reader-adjust-toggle-btn";
-    readerAdjustRemoveSingleEmptyBtn.setAttribute("aria-label", "\u53BB\u9664\u7A7A\u6BB5\u843D");
-    readerAdjustRemoveSingleEmptyBtn.setAttribute("aria-pressed", "false");
-    const iconReaderAdjustRemoveSingleEmptyCheckEl = iconCheck(18);
-    iconReaderAdjustRemoveSingleEmptyCheckEl.style.display = "none";
-    readerAdjustRemoveSingleEmptyBtn.appendChild(iconReaderAdjustRemoveSingleEmptyCheckEl);
-    const readerAdjustRemoveSingleEmptyControls = document.createElement("div");
-    readerAdjustRemoveSingleEmptyControls.className = "esj-reader-adjust-row";
-    readerAdjustRemoveSingleEmptyControls.appendChild(readerAdjustRemoveSingleEmptyBtn);
-    readerAdjustRemoveSingleEmptyRow.appendChild(readerAdjustRemoveSingleEmptyLabel);
-    readerAdjustRemoveSingleEmptyRow.appendChild(readerAdjustRemoveSingleEmptyControls);
-    readerAdjustPanel.appendChild(readerAdjustRemoveSingleEmptyRow);
     const readerAdjustActions = document.createElement("div");
     readerAdjustActions.className = "esj-reader-adjust-actions";
+    const btnReaderAdjustCancel = document.createElement("button");
+    btnReaderAdjustCancel.type = "button";
+    btnReaderAdjustCancel.id = "esj-reader-adjust-cancel";
+    btnReaderAdjustCancel.textContent = "\u53D6\u6D88";
     const btnReaderAdjustApply = document.createElement("button");
     btnReaderAdjustApply.type = "button";
     btnReaderAdjustApply.id = "esj-reader-adjust-apply";
     btnReaderAdjustApply.textContent = "\u78BA\u5B9A";
+    readerAdjustActions.appendChild(btnReaderAdjustCancel);
     readerAdjustActions.appendChild(btnReaderAdjustApply);
     readerAdjustPanel.appendChild(readerAdjustActions);
     readerAdjustOverlay.appendChild(readerAdjustBackdrop);
@@ -1156,12 +1176,45 @@
     pageJumpPanel.appendChild(pageJumpActions);
     pageJumpOverlay.appendChild(pageJumpBackdrop);
     pageJumpOverlay.appendChild(pageJumpPanel);
+    const fullscreenPromptOverlay = document.createElement("div");
+    fullscreenPromptOverlay.id = "esj-fullscreen-prompt-overlay";
+    fullscreenPromptOverlay.setAttribute("role", "dialog");
+    fullscreenPromptOverlay.setAttribute("aria-modal", "true");
+    fullscreenPromptOverlay.setAttribute("aria-hidden", "true");
+    const fullscreenPromptBackdrop = document.createElement("div");
+    fullscreenPromptBackdrop.className = "esj-fullscreen-prompt-backdrop";
+    const fullscreenPromptPanel = document.createElement("div");
+    fullscreenPromptPanel.className = "esj-fullscreen-prompt-panel";
+    const fullscreenPromptTitle = document.createElement("div");
+    fullscreenPromptTitle.className = "esj-fullscreen-prompt-title";
+    fullscreenPromptTitle.textContent = "\u9032\u5165\u5168\u87A2\u5E55\u6A21\u5F0F\uFF1F";
+    const fullscreenPromptMessage = document.createElement("div");
+    fullscreenPromptMessage.className = "esj-fullscreen-prompt-message";
+    fullscreenPromptMessage.textContent = "\u5168\u87A2\u5E55\u6A21\u5F0F\u53EF\u63D0\u4F9B\u66F4\u597D\u7684\u95B1\u8B80\u9AD4\u9A57";
+    const fullscreenPromptActions = document.createElement("div");
+    fullscreenPromptActions.className = "esj-fullscreen-prompt-actions";
+    const btnFullscreenPromptCancel = document.createElement("button");
+    btnFullscreenPromptCancel.type = "button";
+    btnFullscreenPromptCancel.id = "esj-fullscreen-prompt-cancel";
+    btnFullscreenPromptCancel.textContent = "\u53D6\u6D88";
+    const btnFullscreenPromptConfirm = document.createElement("button");
+    btnFullscreenPromptConfirm.type = "button";
+    btnFullscreenPromptConfirm.id = "esj-fullscreen-prompt-confirm";
+    btnFullscreenPromptConfirm.textContent = "\u78BA\u5B9A";
+    fullscreenPromptActions.appendChild(btnFullscreenPromptCancel);
+    fullscreenPromptActions.appendChild(btnFullscreenPromptConfirm);
+    fullscreenPromptPanel.appendChild(fullscreenPromptTitle);
+    fullscreenPromptPanel.appendChild(fullscreenPromptMessage);
+    fullscreenPromptPanel.appendChild(fullscreenPromptActions);
+    fullscreenPromptOverlay.appendChild(fullscreenPromptBackdrop);
+    fullscreenPromptOverlay.appendChild(fullscreenPromptPanel);
     readerRoot.appendChild(canvasWrap);
     readerRoot.appendChild(header);
     readerRoot.appendChild(footer);
     readerRoot.appendChild(drawerOverlay);
     readerRoot.appendChild(readerAdjustOverlay);
     readerRoot.appendChild(pageJumpOverlay);
+    readerRoot.appendChild(fullscreenPromptOverlay);
     return {
       style,
       readerRoot,
@@ -1224,7 +1277,10 @@
       inputWebFontCssUrl,
       inputWebFontFamily,
       btnApplyWebFont,
-      readerRemoveSingleEmptyValue,
+      btnRemoveSingleEmptyToggle,
+      iconRemoveSingleEmptyCheckEl,
+      btnFullscreenPromptToggle,
+      iconFullscreenPromptCheckEl,
       readerAdjustOverlay,
       readerAdjustBackdrop,
       readerAdjustPanel,
@@ -1252,142 +1308,21 @@
       btnReaderAdjustPageMaxWidthDec: adjustPageMaxWidthRow.decBtn,
       rangeReaderAdjustPageMaxWidth: adjustPageMaxWidthRow.rangeEl,
       btnReaderAdjustPageMaxWidthInc: adjustPageMaxWidthRow.incBtn,
-      btnReaderAdjustRemoveSingleEmpty: readerAdjustRemoveSingleEmptyBtn,
+      btnReaderAdjustCancel,
       btnReaderAdjustApply,
-      iconReaderAdjustRemoveSingleEmptyCheckEl,
       pageJumpOverlay,
       pageJumpBackdrop,
       pageJumpPanel,
       pageJumpInput,
       pageJumpTotalEl,
       pageJumpCancel,
-      pageJumpOk
+      pageJumpOk,
+      fullscreenPromptOverlay,
+      fullscreenPromptBackdrop,
+      fullscreenPromptPanel,
+      btnFullscreenPromptCancel,
+      btnFullscreenPromptConfirm
     };
-  }
-
-  // src/reader/renderCanvas.ts
-  function ellipsizeToWidth(ctx, raw, maxWidth) {
-    if (maxWidth <= 0) return "";
-    if (ctx.measureText(raw).width <= maxWidth) return raw;
-    const ellipsis = "...";
-    const ellipsisW = ctx.measureText(ellipsis).width;
-    if (ellipsisW >= maxWidth) return ellipsis;
-    let lo = 0;
-    let hi = raw.length;
-    while (lo < hi) {
-      const mid = Math.ceil((lo + hi) / 2);
-      const candidate = raw.slice(0, mid) + ellipsis;
-      if (ctx.measureText(candidate).width <= maxWidth) {
-        lo = mid;
-      } else {
-        hi = mid - 1;
-      }
-    }
-    return raw.slice(0, lo) + ellipsis;
-  }
-  function drawBottomMetadata(ctx, height, title, pageLabel, settings, textLeft, textWidth) {
-    const metaFontSize = 13;
-    const metaY = Math.max(metaFontSize, height - Math.max(settings.pagePaddingY / 2, metaFontSize));
-    const metaGap = 12;
-    ctx.textBaseline = "middle";
-    ctx.font = `${metaFontSize}px ${settings.fontFamily}`;
-    ctx.fillStyle = "#666";
-    const rightW = ctx.measureText(pageLabel).width;
-    const rightX = textLeft + textWidth;
-    ctx.textAlign = "right";
-    ctx.fillText(pageLabel, rightX, metaY);
-    const titleMaxW = Math.max(0, textWidth - rightW - metaGap);
-    const metaTitle = ellipsizeToWidth(ctx, title, titleMaxW);
-    ctx.textAlign = "left";
-    ctx.fillText(metaTitle, textLeft, metaY);
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "#111";
-    ctx.font = `${settings.fontSize}px ${settings.fontFamily}`;
-  }
-
-  // src/reader/settings.ts
-  var readerSettings = {
-    fontFamily: '"Noto Serif CJK TC", "Source Han Serif TC", PMingLiU, serif',
-    fontSize: 26,
-    lineHeight: 1.8,
-    paragraphSpacing: 18,
-    pagePaddingX: 24,
-    pagePaddingY: 24,
-    pageMaxWidth: 880
-  };
-  var chromeSettingsMobile = {
-    headerHeight: 48,
-    footerHeight: 46,
-    headerGap: 8,
-    headerPadLeft: 6,
-    headerPadRight: 8,
-    headerMenuButtonSize: 38,
-    headerTitleFontSize: 16,
-    headerPageFontSize: 12,
-    footerChapterButtonWidth: 48,
-    footerChapterButtonMaxWidth: 56,
-    footerChapterButtonPadX: 2,
-    footerPageFontSize: 14,
-    footerPageCellPadX: 4,
-    footerPageButtonPadY: 4,
-    footerPageButtonPadX: 8,
-    iconMenuSize: 20,
-    iconChapterSize: 18,
-    iconPageSize: 20,
-    iconTableOfContentsSize: 20
-  };
-  var chromeSettingsTablet = {
-    headerHeight: 56,
-    footerHeight: 52,
-    headerGap: 12,
-    headerPadLeft: 8,
-    headerPadRight: 12,
-    headerMenuButtonSize: 44,
-    headerTitleFontSize: 18,
-    headerPageFontSize: 13,
-    footerChapterButtonWidth: 56,
-    footerChapterButtonMaxWidth: 72,
-    footerChapterButtonPadX: 4,
-    footerPageFontSize: 16,
-    footerPageCellPadX: 6,
-    footerPageButtonPadY: 6,
-    footerPageButtonPadX: 10,
-    iconMenuSize: 22,
-    iconChapterSize: 20,
-    iconPageSize: 22,
-    iconTableOfContentsSize: 22
-  };
-  var chromeSettingsDesktop = {
-    headerHeight: 60,
-    footerHeight: 56,
-    headerGap: 14,
-    headerPadLeft: 10,
-    headerPadRight: 14,
-    headerMenuButtonSize: 46,
-    headerTitleFontSize: 19,
-    headerPageFontSize: 14,
-    footerChapterButtonWidth: 60,
-    footerChapterButtonMaxWidth: 76,
-    footerChapterButtonPadX: 6,
-    footerPageFontSize: 17,
-    footerPageCellPadX: 8,
-    footerPageButtonPadY: 7,
-    footerPageButtonPadX: 12,
-    iconMenuSize: 24,
-    iconChapterSize: 22,
-    iconPageSize: 24,
-    iconTableOfContentsSize: 24
-  };
-  function getChromePreset(width) {
-    if (width <= 640) return "mobile";
-    if (width <= 1024) return "tablet";
-    return "desktop";
-  }
-  function getChromeSettingsForPreset(preset) {
-    if (preset === "mobile") return chromeSettingsMobile;
-    if (preset === "desktop") return chromeSettingsDesktop;
-    return chromeSettingsTablet;
   }
 
   // src/reader/styles.ts
@@ -1696,6 +1631,41 @@
       padding: 8px 4px 0;
     }
 
+    .esj-drawer-other-settings {
+      border-top: 1px solid #ececec;
+      margin-top: 4px;
+      padding: 8px 4px 0;
+    }
+
+    .esj-setting-checkbox-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 2px;
+      margin-top: 0;
+    }
+
+    .esj-setting-checkbox-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .esj-setting-checkbox-btn[aria-pressed="true"] {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+    }
+
     .esj-setting-select {
       min-width: 160px;
       max-width: 190px;
@@ -1884,18 +1854,25 @@
 
     .esj-reader-adjust-actions {
       display: flex;
+      gap: 10px;
       justify-content: flex-end;
       margin-top: 4px;
     }
 
-    #esj-reader-adjust-apply {
+    .esj-reader-adjust-actions button {
       padding: 8px 16px;
       font-size: 15px;
-      border: 1px solid #111;
+      border: 1px solid #aaa;
       border-radius: 6px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+    }
+
+    #esj-reader-adjust-apply {
       background: #111;
       color: #fff;
-      cursor: pointer;
+      border-color: #111;
     }
 
     .esj-setting-toggle-icon {
@@ -2140,7 +2117,163 @@
       color: #fff;
       border-color: #111;
     }
+
+    #esj-fullscreen-prompt-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #esj-fullscreen-prompt-overlay[aria-hidden="false"] {
+      display: flex;
+    }
+
+    .esj-fullscreen-prompt-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .esj-fullscreen-prompt-panel {
+      position: relative;
+      z-index: 1;
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 90%;
+      width: 320px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .esj-fullscreen-prompt-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 12px;
+    }
+
+    .esj-fullscreen-prompt-message {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .esj-fullscreen-prompt-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .esj-fullscreen-prompt-actions button {
+      padding: 10px 20px;
+      font-size: 15px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+    }
+
+    #esj-fullscreen-prompt-confirm {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
   `;
+  }
+
+  // src/reader/settings.ts
+  var readerSettings = {
+    fontFamily: '"Noto Serif CJK TC", "Source Han Serif TC", PMingLiU, serif',
+    fontSize: 26,
+    lineHeight: 1.8,
+    paragraphSpacing: 18,
+    pagePaddingX: 24,
+    pagePaddingY: 24,
+    pageMaxWidth: 880
+  };
+  var chromeSettingsMobile = {
+    headerHeight: 48,
+    footerHeight: 46,
+    headerGap: 8,
+    headerPadLeft: 6,
+    headerPadRight: 8,
+    headerMenuButtonSize: 38,
+    headerTitleFontSize: 16,
+    headerPageFontSize: 12,
+    footerChapterButtonWidth: 48,
+    footerChapterButtonMaxWidth: 56,
+    footerChapterButtonPadX: 2,
+    footerPageFontSize: 14,
+    footerPageCellPadX: 4,
+    footerPageButtonPadY: 4,
+    footerPageButtonPadX: 8,
+    iconMenuSize: 20,
+    iconChapterSize: 18,
+    iconPageSize: 20,
+    iconTableOfContentsSize: 20
+  };
+  var chromeSettingsTablet = {
+    headerHeight: 56,
+    footerHeight: 52,
+    headerGap: 12,
+    headerPadLeft: 8,
+    headerPadRight: 12,
+    headerMenuButtonSize: 44,
+    headerTitleFontSize: 18,
+    headerPageFontSize: 13,
+    footerChapterButtonWidth: 56,
+    footerChapterButtonMaxWidth: 72,
+    footerChapterButtonPadX: 4,
+    footerPageFontSize: 16,
+    footerPageCellPadX: 6,
+    footerPageButtonPadY: 6,
+    footerPageButtonPadX: 10,
+    iconMenuSize: 22,
+    iconChapterSize: 20,
+    iconPageSize: 22,
+    iconTableOfContentsSize: 22
+  };
+  var chromeSettingsDesktop = {
+    headerHeight: 60,
+    footerHeight: 56,
+    headerGap: 14,
+    headerPadLeft: 10,
+    headerPadRight: 14,
+    headerMenuButtonSize: 46,
+    headerTitleFontSize: 19,
+    headerPageFontSize: 14,
+    footerChapterButtonWidth: 60,
+    footerChapterButtonMaxWidth: 76,
+    footerChapterButtonPadX: 6,
+    footerPageFontSize: 17,
+    footerPageCellPadX: 8,
+    footerPageButtonPadY: 7,
+    footerPageButtonPadX: 12,
+    iconMenuSize: 24,
+    iconChapterSize: 22,
+    iconPageSize: 24,
+    iconTableOfContentsSize: 24
+  };
+  function getChromePreset(width) {
+    if (width <= 640) return "mobile";
+    if (width <= 1024) return "tablet";
+    return "desktop";
+  }
+  function getChromeSettingsForPreset(preset) {
+    if (preset === "mobile") return chromeSettingsMobile;
+    if (preset === "desktop") return chromeSettingsDesktop;
+    return chromeSettingsTablet;
   }
 
   // src/readerState.ts
@@ -2165,19 +2298,20 @@
       swipeStartY: null,
       suppressNextSideTap: false,
       removeSingleEmptyParagraph: false,
+      showFullscreenPrompt: true,
       pagedBlocks: blocks,
       currentReaderSettings: { ...readerSettings },
-      pendingRestorePageIndex: null,
-      lastSavedPageIndex: -1,
+      pendingRestoreCursor: null,
+      lastSavedCursor: null,
       hasSavedProfile: false,
       readerSettingsExpanded: false,
       profileExpanded: false,
       savedProfile: null,
       imageCache: /* @__PURE__ */ new Map(),
       lastRenderedPageIndex: -1,
-      shouldRestoreFullscreenOnNextTap: false,
       adjustAnchorCursor: null,
       previewFromAdjust: false,
+      snapshotBeforeAdjust: null,
       fontSource: "local",
       webFontLinkEl: null
     };
@@ -2244,10 +2378,10 @@
 
   // src/storage.ts
   var READER_PROFILE_STORAGE_KEY = "esj-pager:reader-profile:v1";
-  var READER_LAST_PAGE_STORAGE_KEY = "esj-pager:last-page:v2";
+  var READER_LAST_PAGE_STORAGE_KEY = "esj-pager:last-page:v3";
   var READER_LAST_PAGE_MAX_NOVELS = 10;
-  var READER_FULLSCREEN_RESTORE_KEY = "esj-pager:restore-fullscreen-once:v1";
   var READER_WEB_FONT_STORAGE_KEY = "esj-pager:web-font:v1";
+  var READER_FULLSCREEN_PROMPT_KEY = "esj-pager:fullscreen-prompt:v1";
   function saveWebFontConfig(config) {
     try {
       window.localStorage.setItem(READER_WEB_FONT_STORAGE_KEY, JSON.stringify(config));
@@ -2278,21 +2412,21 @@
       return [];
     }
   }
-  function loadSavedPageIndex(novelId, chapterKey) {
+  function loadSavedCursor(novelId, chapterKey) {
     if (!novelId) return null;
     const entries = loadLastPageEntries();
     const entry = entries.find((e) => e.novelId === novelId);
     if (!entry) return null;
     if (entry.chapter !== chapterKey) return null;
-    if (!Number.isFinite(entry.page)) return null;
-    return Math.max(0, Math.floor(entry.page) - 1);
+    if (!entry.cursor || typeof entry.cursor.bi !== "number" || typeof entry.cursor.off !== "number") return null;
+    return { bi: Math.max(0, Math.floor(entry.cursor.bi)), off: Math.max(0, Math.floor(entry.cursor.off)) };
   }
-  function saveCurrentPageIndex(novelId, chapterKey, pageIndex) {
+  function saveCurrentCursor(novelId, chapterKey, cursor) {
     if (!novelId) return;
     try {
       let entries = loadLastPageEntries();
       entries = entries.filter((e) => e.novelId !== novelId);
-      entries.push({ novelId, chapter: chapterKey, page: pageIndex + 1, ts: Date.now() });
+      entries.push({ novelId, chapter: chapterKey, cursor: { bi: cursor.bi, off: cursor.off }, ts: Date.now() });
       if (entries.length > READER_LAST_PAGE_MAX_NOVELS) {
         entries.sort((a, b) => a.ts - b.ts);
         entries = entries.slice(entries.length - READER_LAST_PAGE_MAX_NOVELS);
@@ -2313,28 +2447,97 @@
       return null;
     }
   }
-  function markFullscreenRestore() {
+  function saveFullscreenPromptSetting(enabled) {
     try {
-      if (document.fullscreenElement) {
-        window.sessionStorage.setItem(READER_FULLSCREEN_RESTORE_KEY, "1");
-      } else {
-        window.sessionStorage.removeItem(READER_FULLSCREEN_RESTORE_KEY);
+      window.localStorage.setItem(READER_FULLSCREEN_PROMPT_KEY, enabled ? "1" : "0");
+    } catch {
+    }
+  }
+  function loadFullscreenPromptSetting() {
+    try {
+      const value = window.localStorage.getItem(READER_FULLSCREEN_PROMPT_KEY);
+      if (value === null) return true;
+      return value === "1";
+    } catch {
+      return true;
+    }
+  }
+  function createProfileSaver(state, syncUi) {
+    return () => {
+      const payload = {
+        fontFamily: state.currentReaderSettings.fontFamily,
+        fontSize: state.currentReaderSettings.fontSize,
+        lineHeight: state.currentReaderSettings.lineHeight,
+        paragraphSpacing: state.currentReaderSettings.paragraphSpacing,
+        pagePaddingX: state.currentReaderSettings.pagePaddingX,
+        pagePaddingY: state.currentReaderSettings.pagePaddingY,
+        pageMaxWidth: state.currentReaderSettings.pageMaxWidth,
+        removeSingleEmptyParagraph: state.removeSingleEmptyParagraph
+      };
+      try {
+        saveReaderProfile(payload);
+        state.savedProfile = { ...payload };
+        state.hasSavedProfile = true;
+        syncUi();
+      } catch {
+        window.alert("\u5132\u5B58\u8A2D\u5B9A\u6A94\u5931\u6557");
       }
-    } catch {
-    }
+    };
   }
-  function loadFullscreenRestoreFlag() {
-    try {
-      return window.sessionStorage.getItem(READER_FULLSCREEN_RESTORE_KEY) === "1";
-    } catch {
-      return false;
-    }
+  function createProfileLoader(state, syncUi, blocks, render) {
+    return () => {
+      const p = loadReaderProfileRaw();
+      if (!p) {
+        state.savedProfile = null;
+        state.hasSavedProfile = false;
+        syncUi();
+        return false;
+      }
+      let changed = false;
+      const pFontFamily = typeof p.fontFamily === "string" && p.fontFamily.trim() ? p.fontFamily : null;
+      if (pFontFamily && state.currentReaderSettings.fontFamily !== pFontFamily) {
+        state.currentReaderSettings.fontFamily = pFontFamily;
+        changed = true;
+      }
+      for (const key of Object.keys(READER_LIMITS)) {
+        const next = clampSetting(key, safeNum(p[key]));
+        if (next === null || state.currentReaderSettings[key] === next) continue;
+        state.currentReaderSettings[key] = next;
+        changed = true;
+      }
+      const pRemove = typeof p.removeSingleEmptyParagraph === "boolean" ? p.removeSingleEmptyParagraph : null;
+      if (pRemove !== null && state.removeSingleEmptyParagraph !== pRemove) {
+        state.removeSingleEmptyParagraph = pRemove;
+        syncUi();
+        state.pagedBlocks = applyEmptyParagraphFilter(blocks, state.removeSingleEmptyParagraph);
+        changed = true;
+      }
+      state.savedProfile = {
+        fontFamily: pFontFamily ?? state.currentReaderSettings.fontFamily,
+        fontSize: clampSetting("fontSize", safeNum(p.fontSize)) ?? state.currentReaderSettings.fontSize,
+        lineHeight: clampSetting("lineHeight", safeNum(p.lineHeight)) ?? state.currentReaderSettings.lineHeight,
+        paragraphSpacing: clampSetting("paragraphSpacing", safeNum(p.paragraphSpacing)) ?? state.currentReaderSettings.paragraphSpacing,
+        pagePaddingX: clampSetting("pagePaddingX", safeNum(p.pagePaddingX)) ?? state.currentReaderSettings.pagePaddingX,
+        pagePaddingY: clampSetting("pagePaddingY", safeNum(p.pagePaddingY)) ?? state.currentReaderSettings.pagePaddingY,
+        pageMaxWidth: clampSetting("pageMaxWidth", safeNum(p.pageMaxWidth)) ?? state.currentReaderSettings.pageMaxWidth,
+        removeSingleEmptyParagraph: pRemove ?? state.removeSingleEmptyParagraph
+      };
+      state.hasSavedProfile = true;
+      syncUi();
+      return changed;
+    };
   }
-  function clearFullscreenRestoreFlag() {
-    try {
-      window.sessionStorage.removeItem(READER_FULLSCREEN_RESTORE_KEY);
-    } catch {
-    }
+  function createPositionSaver(state, novelId, chapterKey) {
+    return () => {
+      if (state.pageStarts.length === 0) return;
+      const currentCursor = state.pageStarts[state.pageIndex];
+      if (!currentCursor) return;
+      if (state.lastSavedCursor && state.lastSavedCursor.bi === currentCursor.bi && state.lastSavedCursor.off === currentCursor.off) {
+        return;
+      }
+      saveCurrentCursor(novelId, chapterKey, currentCursor);
+      state.lastSavedCursor = { ...currentCursor };
+    };
   }
 
   // src/fonts.ts
@@ -2411,669 +2614,72 @@
     ]);
   }
 
-  // src/main.ts
-  function main() {
-    const root = getForumContent();
-    if (!root) return;
-    const title = getChapterTitle();
-    const blocks = extractBlocksFromHtml(root.innerHTML);
-    const commentsRoot = getCommentsRoot();
-    const commentBlocks = commentsRoot ? extractCommentBlocksFromHtml(commentsRoot.innerHTML) : [];
-    const allBlocks = [...blocks, ...commentBlocks];
-    const chapterNav = getAdjacentChapterHrefs();
-    const novelDetailHref = getNovelDetailHref();
-    mountReader(title, allBlocks, chapterNav, novelDetailHref);
-    console.info("[esj-pager]", title, "blocks:", allBlocks.length);
-  }
-  function mountReader(title, blocks, chapterNav, novelDetailHref) {
-    const refs = createReaderDom(title, novelDetailHref, chapterNav);
-    const {
-      style,
-      readerRoot,
-      btnHeaderMenu,
-      iconHeaderMenu,
-      btnHeaderFullscreen,
-      iconHeaderFullscreenExpand,
-      iconHeaderFullscreenShrink,
-      drawerOverlay,
-      drawerBackdrop,
-      iconTocEl,
-      canvasWrap,
-      canvas,
-      btnTapPrevPage,
-      btnTapChrome,
-      btnTapNextPage,
-      btnPrevChap,
-      iconPrevChapEl,
-      btnPrevPage,
-      iconPrevPageEl,
-      footerPageCell,
-      btnFooterPageJump,
-      iconFooterPageJumpEl,
-      footerPageCur,
-      footerPageTotal,
-      btnNextPage,
-      iconNextPageEl,
-      btnNextChap,
-      iconNextChapEl,
-      readerSettingFontValue,
-      readerSettingLineHeightValue,
-      readerSettingParaSpacingValue,
-      readerSettingPagePaddingXValue,
-      readerSettingPagePaddingYValue,
-      readerSettingPageMaxWidthValue,
-      btnReaderSettingsAdjust,
-      btnReaderSettingsDropdown,
-      iconReaderSettingsChevronDownEl,
-      iconReaderSettingsChevronUpEl,
-      readerSettingsContent,
-      btnProfileSave,
-      btnProfileRestore,
-      btnProfileDropdown,
-      iconProfileChevronDownEl,
-      iconProfileChevronUpEl,
-      profileContent,
-      profileFontValue,
-      profileLineHeightValue,
-      profileParaSpacingValue,
-      profilePagePaddingXValue,
-      profilePagePaddingYValue,
-      profilePageMaxWidthValue,
-      profileRemoveSingleEmptyValue,
-      selectFontSource,
-      fontLocalRow,
-      selectLocalFont,
-      fontWebControls,
-      inputWebFontCssUrl,
-      inputWebFontFamily,
-      btnApplyWebFont,
-      readerRemoveSingleEmptyValue,
-      readerAdjustOverlay,
-      readerAdjustBackdrop,
-      readerAdjustPanel,
-      readerAdjustFontValue,
-      btnReaderAdjustFontDec,
-      rangeReaderAdjustFont,
-      btnReaderAdjustFontInc,
-      readerAdjustLineHeightValue,
-      btnReaderAdjustLineHeightDec,
-      rangeReaderAdjustLineHeight,
-      btnReaderAdjustLineHeightInc,
-      readerAdjustParaSpacingValue,
-      btnReaderAdjustParaSpacingDec,
-      rangeReaderAdjustParaSpacing,
-      btnReaderAdjustParaSpacingInc,
-      readerAdjustPagePaddingXValue,
-      btnReaderAdjustPagePaddingXDec,
-      rangeReaderAdjustPagePaddingX,
-      btnReaderAdjustPagePaddingXInc,
-      readerAdjustPagePaddingYValue,
-      btnReaderAdjustPagePaddingYDec,
-      rangeReaderAdjustPagePaddingY,
-      btnReaderAdjustPagePaddingYInc,
-      readerAdjustPageMaxWidthValue,
-      btnReaderAdjustPageMaxWidthDec,
-      rangeReaderAdjustPageMaxWidth,
-      btnReaderAdjustPageMaxWidthInc,
-      btnReaderAdjustRemoveSingleEmpty,
-      btnReaderAdjustApply,
-      iconReaderAdjustRemoveSingleEmptyCheckEl,
-      pageJumpOverlay,
-      pageJumpBackdrop,
-      pageJumpPanel,
-      pageJumpInput,
-      pageJumpTotalEl,
-      pageJumpCancel,
-      pageJumpOk
-    } = refs;
-    style.textContent = buildReaderStyles();
-    document.head.appendChild(style);
-    document.body.appendChild(readerRoot);
-    const rootEl = document.documentElement;
-    const bodyEl = document.body;
-    const prevRootOverflow = rootEl.style.overflow;
-    const prevBodyOverflow = bodyEl.style.overflow;
-    rootEl.style.overflow = "hidden";
-    bodyEl.style.overflow = "hidden";
-    const eventAc = new AbortController();
-    const eventSignal = eventAc.signal;
-    const restorePageScroll = () => {
-      eventAc.abort();
-      rootEl.style.overflow = prevRootOverflow;
-      bodyEl.style.overflow = prevBodyOverflow;
-    };
-    window.addEventListener("pagehide", restorePageScroll, { once: true });
-    const s = createReaderState(blocks);
-    const novelId = getNovelId();
-    const chapterKey = `${window.location.pathname}${window.location.search}`;
-    const sourceLocalOption = document.createElement("option");
-    sourceLocalOption.value = "local";
-    sourceLocalOption.textContent = "\u672C\u6A5F\u5B57\u9AD4";
-    selectFontSource.appendChild(sourceLocalOption);
-    const sourceWebOption = document.createElement("option");
-    sourceWebOption.value = "web";
-    sourceWebOption.textContent = "Web Font";
-    selectFontSource.appendChild(sourceWebOption);
-    selectFontSource.value = "local";
-    for (const option of LOCAL_FONT_OPTIONS) {
-      if (option.detectFamilies && !isAnyFontFamilyAvailable(option.detectFamilies)) continue;
-      const el = document.createElement("option");
-      el.value = option.value;
-      el.textContent = option.label;
-      selectLocalFont.appendChild(el);
-    }
-    function syncFontSourceUi() {
-      selectFontSource.value = s.fontSource;
-      selectLocalFont.disabled = s.fontSource !== "local";
-      fontLocalRow.classList.toggle("hidden", s.fontSource !== "local");
-      fontWebControls.classList.toggle("open", s.fontSource === "web");
-    }
-    function syncLocalFontSelectUi() {
-      const match = LOCAL_FONT_OPTIONS.find((opt) => opt.value === s.currentReaderSettings.fontFamily);
-      if (match) {
-        selectLocalFont.value = match.value;
+  // src/eventHandlers.ts
+  function createEventHandlers(ctx) {
+    const { state, refs, chapterNav } = ctx;
+    const { canvasWrap, drawerOverlay, pageJumpOverlay, readerAdjustOverlay } = refs;
+    function handleSideTap() {
+      if (state.suppressNextSideTap) {
+        state.suppressNextSideTap = false;
         return;
       }
-      selectLocalFont.value = "";
-    }
-    function syncReaderAdjustUi() {
-      function syncOne(key, valueEl, rangeEl, decBtn, incBtn) {
-        const limits = READER_LIMITS[key];
-        const value = s.currentReaderSettings[key];
-        valueEl.textContent = key === "lineHeight" ? formatLineHeight(value) : String(value);
-        rangeEl.min = String(limits.min);
-        rangeEl.max = String(limits.max);
-        rangeEl.step = String(limits.step);
-        rangeEl.value = String(value);
-        decBtn.disabled = value <= limits.min;
-        incBtn.disabled = value >= limits.max;
-      }
-      syncOne("fontSize", readerAdjustFontValue, rangeReaderAdjustFont, btnReaderAdjustFontDec, btnReaderAdjustFontInc);
-      syncOne("lineHeight", readerAdjustLineHeightValue, rangeReaderAdjustLineHeight, btnReaderAdjustLineHeightDec, btnReaderAdjustLineHeightInc);
-      syncOne("paragraphSpacing", readerAdjustParaSpacingValue, rangeReaderAdjustParaSpacing, btnReaderAdjustParaSpacingDec, btnReaderAdjustParaSpacingInc);
-      syncOne("pagePaddingX", readerAdjustPagePaddingXValue, rangeReaderAdjustPagePaddingX, btnReaderAdjustPagePaddingXDec, btnReaderAdjustPagePaddingXInc);
-      syncOne("pagePaddingY", readerAdjustPagePaddingYValue, rangeReaderAdjustPagePaddingY, btnReaderAdjustPagePaddingYDec, btnReaderAdjustPagePaddingYInc);
-      syncOne("pageMaxWidth", readerAdjustPageMaxWidthValue, rangeReaderAdjustPageMaxWidth, btnReaderAdjustPageMaxWidthDec, btnReaderAdjustPageMaxWidthInc);
-    }
-    function updateReaderSettingsUi() {
-      readerSettingFontValue.textContent = `${s.currentReaderSettings.fontSize}`;
-      readerSettingLineHeightValue.textContent = formatLineHeight(s.currentReaderSettings.lineHeight);
-      readerSettingParaSpacingValue.textContent = `${s.currentReaderSettings.paragraphSpacing}`;
-      readerSettingPagePaddingXValue.textContent = `${s.currentReaderSettings.pagePaddingX}`;
-      readerSettingPagePaddingYValue.textContent = `${s.currentReaderSettings.pagePaddingY}`;
-      readerSettingPageMaxWidthValue.textContent = `${s.currentReaderSettings.pageMaxWidth}`;
-      syncLocalFontSelectUi();
-      syncReaderAdjustUi();
-      btnProfileRestore.disabled = !s.hasSavedProfile;
-    }
-    function updateProfileUi() {
-      if (!s.savedProfile) {
-        profileFontValue.textContent = "-";
-        profileLineHeightValue.textContent = "-";
-        profileParaSpacingValue.textContent = "-";
-        profilePagePaddingXValue.textContent = "-";
-        profilePagePaddingYValue.textContent = "-";
-        profilePageMaxWidthValue.textContent = "-";
-        profileRemoveSingleEmptyValue.textContent = "-";
-        return;
-      }
-      profileFontValue.textContent = String(s.savedProfile.fontSize);
-      profileLineHeightValue.textContent = formatLineHeight(s.savedProfile.lineHeight);
-      profileParaSpacingValue.textContent = String(s.savedProfile.paragraphSpacing);
-      profilePagePaddingXValue.textContent = String(s.savedProfile.pagePaddingX);
-      profilePagePaddingYValue.textContent = String(s.savedProfile.pagePaddingY);
-      profilePageMaxWidthValue.textContent = String(s.savedProfile.pageMaxWidth);
-      profileRemoveSingleEmptyValue.textContent = s.savedProfile.removeSingleEmptyParagraph ? "ON" : "OFF";
-    }
-    function updateRemoveSingleEmptyParagraphUi() {
-      readerRemoveSingleEmptyValue.textContent = s.removeSingleEmptyParagraph ? "ON" : "OFF";
-      btnReaderAdjustRemoveSingleEmpty.setAttribute("aria-pressed", s.removeSingleEmptyParagraph ? "true" : "false");
-      iconReaderAdjustRemoveSingleEmptyCheckEl.style.display = s.removeSingleEmptyParagraph ? "" : "none";
-    }
-    function setProfileExpanded(expanded) {
-      s.profileExpanded = expanded;
-      btnProfileDropdown.setAttribute("aria-expanded", expanded ? "true" : "false");
-      profileContent.classList.toggle("open", expanded);
-      iconProfileChevronDownEl.style.display = expanded ? "none" : "";
-      iconProfileChevronUpEl.style.display = expanded ? "" : "none";
-    }
-    function setReaderSettingsExpanded(expanded) {
-      s.readerSettingsExpanded = expanded;
-      btnReaderSettingsDropdown.setAttribute("aria-expanded", expanded ? "true" : "false");
-      readerSettingsContent.classList.toggle("open", expanded);
-      iconReaderSettingsChevronDownEl.style.display = expanded ? "none" : "";
-      iconReaderSettingsChevronUpEl.style.display = expanded ? "" : "none";
-    }
-    function saveReaderProfile2() {
-      const payload = {
-        fontFamily: s.currentReaderSettings.fontFamily,
-        fontSize: s.currentReaderSettings.fontSize,
-        lineHeight: s.currentReaderSettings.lineHeight,
-        paragraphSpacing: s.currentReaderSettings.paragraphSpacing,
-        pagePaddingX: s.currentReaderSettings.pagePaddingX,
-        pagePaddingY: s.currentReaderSettings.pagePaddingY,
-        pageMaxWidth: s.currentReaderSettings.pageMaxWidth,
-        removeSingleEmptyParagraph: s.removeSingleEmptyParagraph
-      };
-      try {
-        saveReaderProfile(payload);
-        s.savedProfile = { ...payload };
-        s.hasSavedProfile = true;
-        updateProfileUi();
-        updateReaderSettingsUi();
-      } catch {
-        window.alert("\u5132\u5B58\u8A2D\u5B9A\u6A94\u5931\u6557");
-      }
-    }
-    function loadSavedReaderProfile() {
-      const p = loadReaderProfileRaw();
-      if (!p) {
-        s.savedProfile = null;
-        s.hasSavedProfile = false;
-        updateProfileUi();
-        return false;
-      }
-      let changed = false;
-      const pFontFamily = typeof p.fontFamily === "string" && p.fontFamily.trim() ? p.fontFamily : null;
-      if (pFontFamily && s.currentReaderSettings.fontFamily !== pFontFamily) {
-        s.currentReaderSettings.fontFamily = pFontFamily;
-        changed = true;
-      }
-      for (const key of Object.keys(READER_LIMITS)) {
-        const next = clampSetting(key, safeNum(p[key]));
-        if (next === null || s.currentReaderSettings[key] === next) continue;
-        s.currentReaderSettings[key] = next;
-        changed = true;
-      }
-      const pRemove = typeof p.removeSingleEmptyParagraph === "boolean" ? p.removeSingleEmptyParagraph : null;
-      if (pRemove !== null && s.removeSingleEmptyParagraph !== pRemove) {
-        s.removeSingleEmptyParagraph = pRemove;
-        updateRemoveSingleEmptyParagraphUi();
-        s.pagedBlocks = applyEmptyParagraphFilter(blocks, s.removeSingleEmptyParagraph);
-        changed = true;
-      }
-      s.savedProfile = {
-        fontFamily: pFontFamily ?? s.currentReaderSettings.fontFamily,
-        fontSize: clampSetting("fontSize", safeNum(p.fontSize)) ?? s.currentReaderSettings.fontSize,
-        lineHeight: clampSetting("lineHeight", safeNum(p.lineHeight)) ?? s.currentReaderSettings.lineHeight,
-        paragraphSpacing: clampSetting("paragraphSpacing", safeNum(p.paragraphSpacing)) ?? s.currentReaderSettings.paragraphSpacing,
-        pagePaddingX: clampSetting("pagePaddingX", safeNum(p.pagePaddingX)) ?? s.currentReaderSettings.pagePaddingX,
-        pagePaddingY: clampSetting("pagePaddingY", safeNum(p.pagePaddingY)) ?? s.currentReaderSettings.pagePaddingY,
-        pageMaxWidth: clampSetting("pageMaxWidth", safeNum(p.pageMaxWidth)) ?? s.currentReaderSettings.pageMaxWidth,
-        removeSingleEmptyParagraph: pRemove ?? s.removeSingleEmptyParagraph
-      };
-      s.hasSavedProfile = true;
-      updateProfileUi();
-      updateReaderSettingsUi();
-      return changed;
-    }
-    function saveCurrentPageIndex2() {
-      if (s.pageStarts.length === 0) return;
-      if (s.pageIndex === s.lastSavedPageIndex) return;
-      saveCurrentPageIndex(novelId, chapterKey, s.pageIndex);
-      s.lastSavedPageIndex = s.pageIndex;
-    }
-    async function applyWebFont(cssUrl, family) {
-      s.webFontLinkEl = ensureWebFontStylesheet(cssUrl, s.webFontLinkEl);
-      await loadWebFont(cssUrl, family);
-      s.currentReaderSettings.fontFamily = family;
-      s.fontSource = "web";
-      syncFontSourceUi();
-      updateReaderSettingsUi();
-      clearCharWidthCache();
-      s.lastCanvasW = -1;
-      s.lastCanvasH = -1;
-      render();
-      saveWebFontConfig({ cssUrl, family });
-    }
-    function closeDrawer() {
-      drawerOverlay.classList.remove("open");
-      drawerOverlay.setAttribute("aria-hidden", "true");
-      btnHeaderMenu.setAttribute("aria-expanded", "false");
-    }
-    function openDrawer() {
-      drawerOverlay.classList.add("open");
-      drawerOverlay.setAttribute("aria-hidden", "false");
-      btnHeaderMenu.setAttribute("aria-expanded", "true");
-    }
-    function restoreFullscreenOnFirstTap() {
-      if (!s.shouldRestoreFullscreenOnNextTap) return;
-      if (document.fullscreenElement) {
-        s.shouldRestoreFullscreenOnNextTap = false;
-        clearFullscreenRestoreFlag();
-        return;
-      }
-      s.shouldRestoreFullscreenOnNextTap = false;
-      clearFullscreenRestoreFlag();
-      void readerRoot.requestFullscreen().catch(() => {
-      });
-    }
-    function syncHeaderFullscreenUi() {
-      const isFullscreen = Boolean(document.fullscreenElement);
-      btnHeaderFullscreen.setAttribute("aria-pressed", isFullscreen ? "true" : "false");
-      btnHeaderFullscreen.setAttribute("aria-label", isFullscreen ? "\u96E2\u958B\u5168\u87A2\u5E55" : "\u9032\u5165\u5168\u87A2\u5E55");
-      iconHeaderFullscreenExpand.style.display = isFullscreen ? "none" : "";
-      iconHeaderFullscreenShrink.style.display = isFullscreen ? "" : "none";
-    }
-    function toggleFullscreen() {
-      if (document.fullscreenElement) {
-        void document.exitFullscreen().catch(() => {
-        });
-        return;
-      }
-      void readerRoot.requestFullscreen().catch(() => {
-      });
-    }
-    function ensureImage(src) {
-      const cached = s.imageCache.get(src);
-      if (cached) return cached;
-      const img = new Image();
-      const entry = { img, status: "loading", naturalWidth: 0, naturalHeight: 0 };
-      img.onload = () => {
-        entry.status = "loaded";
-        entry.naturalWidth = img.naturalWidth || 0;
-        entry.naturalHeight = img.naturalHeight || 0;
-        s.lastCanvasW = -1;
-        s.lastCanvasH = -1;
-        render();
-      };
-      img.onerror = () => {
-        entry.status = "error";
-        s.lastCanvasW = -1;
-        s.lastCanvasH = -1;
-        render();
-      };
-      img.src = src;
-      s.imageCache.set(src, entry);
-      return entry;
-    }
-    function getImageRenderInfo(src, maxWidth) {
-      const entry = ensureImage(src);
-      if (entry.status !== "loaded" || entry.naturalWidth <= 0 || entry.naturalHeight <= 0) {
-        return { ready: false, drawWidth: maxWidth, drawHeight: Math.max(80, Math.floor(maxWidth * 0.56)) };
-      }
-      const scale = maxWidth > 0 ? Math.min(1, maxWidth / entry.naturalWidth) : 1;
-      return {
-        ready: true,
-        drawWidth: Math.max(1, Math.floor(entry.naturalWidth * scale)),
-        drawHeight: Math.max(1, Math.floor(entry.naturalHeight * scale))
-      };
-    }
-    function setIconSize(el, size) {
-      if (!el) return;
-      el.setAttribute("width", String(size));
-      el.setAttribute("height", String(size));
-    }
-    function applyChromeSettings(settings) {
-      s.activeChromeSettings = settings;
-      readerRoot.style.setProperty("--esj-header-h", `${settings.headerHeight}px`);
-      readerRoot.style.setProperty("--esj-footer-h", `${settings.footerHeight}px`);
-      readerRoot.style.setProperty("--esj-header-gap", `${settings.headerGap}px`);
-      readerRoot.style.setProperty("--esj-header-pad-l", `${settings.headerPadLeft}px`);
-      readerRoot.style.setProperty("--esj-header-pad-r", `${settings.headerPadRight}px`);
-      readerRoot.style.setProperty("--esj-header-menu-btn-size", `${settings.headerMenuButtonSize}px`);
-      readerRoot.style.setProperty("--esj-header-title-font-size", `${settings.headerTitleFontSize}px`);
-      readerRoot.style.setProperty("--esj-header-page-font-size", `${settings.headerPageFontSize}px`);
-      readerRoot.style.setProperty("--esj-footer-chapter-btn-width", `${settings.footerChapterButtonWidth}px`);
-      readerRoot.style.setProperty("--esj-footer-chapter-btn-max-width", `${settings.footerChapterButtonMaxWidth}px`);
-      readerRoot.style.setProperty("--esj-footer-chapter-btn-pad-x", `${settings.footerChapterButtonPadX}px`);
-      readerRoot.style.setProperty("--esj-footer-page-font-size", `${settings.footerPageFontSize}px`);
-      readerRoot.style.setProperty("--esj-footer-pagecell-pad-x", `${settings.footerPageCellPadX}px`);
-      readerRoot.style.setProperty("--esj-footer-page-btn-pad-y", `${settings.footerPageButtonPadY}px`);
-      readerRoot.style.setProperty("--esj-footer-page-btn-pad-x", `${settings.footerPageButtonPadX}px`);
-      setIconSize(iconHeaderMenu, settings.iconMenuSize);
-      setIconSize(iconHeaderFullscreenExpand, settings.iconMenuSize);
-      setIconSize(iconHeaderFullscreenShrink, settings.iconMenuSize);
-      setIconSize(iconTocEl, settings.iconTableOfContentsSize);
-      setIconSize(iconPrevChapEl, settings.iconChapterSize);
-      setIconSize(iconNextChapEl, settings.iconChapterSize);
-      setIconSize(iconPrevPageEl, settings.iconPageSize);
-      setIconSize(iconNextPageEl, settings.iconPageSize);
-      setIconSize(iconFooterPageJumpEl, settings.iconPageSize);
-    }
-    function applyChromeVisibility() {
-      readerRoot.classList.toggle("esj-chrome-hidden", !s.chromeVisible);
-    }
-    function updateResponsiveChrome() {
-      const preset = getChromePreset(window.innerWidth);
-      if (preset === s.activeChromePreset) return;
-      s.activeChromePreset = preset;
-      applyChromeSettings(getChromeSettingsForPreset(preset));
-      syncCanvasTapLayerLayout();
-    }
-    function updatePageChrome() {
-      const total = s.pageStarts.length;
-      if (total === 0) {
-        footerPageCur.textContent = "0";
-        footerPageTotal.textContent = "0";
-        btnFooterPageJump.disabled = true;
-        pageJumpTotalEl.textContent = "0";
-        pageJumpInput.removeAttribute("max");
-        btnPrevPage.disabled = true;
-        btnNextPage.disabled = true;
-        return;
-      }
-      footerPageCur.textContent = String(s.pageIndex + 1);
-      footerPageTotal.textContent = String(total);
-      btnFooterPageJump.disabled = false;
-      pageJumpTotalEl.textContent = String(total);
-      pageJumpInput.max = String(total);
-      pageJumpInput.min = "1";
-      btnPrevPage.disabled = s.pageIndex <= 0;
-      btnNextPage.disabled = s.pageIndex >= total - 1;
-    }
-    function toggleChrome() {
-      s.chromeVisible = !s.chromeVisible;
-      applyChromeVisibility();
-      syncCanvasTapLayerLayout();
-    }
-    function syncCanvasTapLayerLayout() {
-      const wrapRect = canvasWrap.getBoundingClientRect();
-      const w = wrapRect.width;
-      if (w <= 0) return;
-      const topPx = s.chromeVisible ? s.activeChromeSettings.headerHeight : 0;
-      const bottomPx = s.chromeVisible ? s.activeChromeSettings.footerHeight : 0;
-      let leftW, midLeft, midW, rightStart, rightW;
-      if (s.chromeVisible) {
-        const cellRect = footerPageCell.getBoundingClientRect();
-        leftW = Math.max(0, Math.round(cellRect.left - wrapRect.left));
-        midLeft = leftW;
-        midW = Math.max(0, Math.round(cellRect.width));
-        rightStart = Math.max(0, Math.round(cellRect.right - wrapRect.left));
-        rightW = Math.max(0, Math.round(wrapRect.right - cellRect.right));
+      if (state.pageIndex >= state.pageStarts.length - 1) {
+        ctx.confirmGoNextChapter();
       } else {
-        const third = Math.floor(w / 3);
-        leftW = third;
-        midLeft = third;
-        midW = third;
-        rightStart = third * 2;
-        rightW = w - third * 2;
+        ctx.goNextPage();
       }
-      const vTop = `${topPx}px`;
-      const vBottom = `${bottomPx}px`;
-      btnTapPrevPage.style.top = vTop;
-      btnTapPrevPage.style.bottom = vBottom;
-      btnTapPrevPage.style.left = "0px";
-      btnTapPrevPage.style.width = `${leftW}px`;
-      btnTapChrome.style.top = vTop;
-      btnTapChrome.style.bottom = vBottom;
-      btnTapChrome.style.left = `${midLeft}px`;
-      btnTapChrome.style.width = `${midW}px`;
-      btnTapNextPage.style.top = vTop;
-      btnTapNextPage.style.bottom = vBottom;
-      btnTapNextPage.style.left = `${rightStart}px`;
-      btnTapNextPage.style.width = `${rightW}px`;
-      const total = s.pageStarts.length;
-      btnTapPrevPage.disabled = !(total > 0 && (s.pageIndex > 0 || Boolean(chapterNav.prev)));
-      btnTapNextPage.disabled = !(total > 0 && (s.pageIndex < total - 1 || Boolean(chapterNav.next)));
-    }
-    function goPrevPage() {
-      if (s.pageIndex > 0) {
-        s.pageIndex -= 1;
-        render();
-      }
-    }
-    function goNextPage() {
-      if (s.pageIndex < s.pageStarts.length - 1) {
-        s.pageIndex += 1;
-        render();
-      }
-    }
-    function confirmGoPrevChapter() {
-      if (!chapterNav.prev) return;
-      if (window.confirm("\u5DF2\u5728\u7B2C\u4E00\u9801\uFF0C\u662F\u5426\u524D\u5F80\u4E0A\u4E00\u7AE0\uFF1F")) {
-        markFullscreenRestore();
-        window.location.href = chapterNav.prev;
-      }
-    }
-    function confirmGoNextChapter() {
-      if (!chapterNav.next) return;
-      if (window.confirm("\u5DF2\u5728\u6700\u5F8C\u4E00\u9801\uFF0C\u662F\u5426\u524D\u5F80\u4E0B\u4E00\u7AE0\uFF1F")) {
-        markFullscreenRestore();
-        window.location.href = chapterNav.next;
-      }
-    }
-    function adjustReaderSetting(key, delta) {
-      const limits = READER_LIMITS[key];
-      const next = clamp(roundByStep(s.currentReaderSettings[key] + delta, limits.step), limits.min, limits.max);
-      if (next === s.currentReaderSettings[key]) return;
-      s.currentReaderSettings[key] = next;
-      updateReaderSettingsUi();
-      if (!s.previewFromAdjust) {
-        s.lastCanvasW = -1;
-        s.lastCanvasH = -1;
-      }
-      render();
-    }
-    function finalizeReaderAdjustRebuild() {
-      const anchor = s.adjustAnchorCursor;
-      s.previewFromAdjust = false;
-      s.adjustAnchorCursor = null;
-      if (!anchor) return;
-      s.lastCanvasW = -1;
-      s.lastCanvasH = -1;
-      render();
-      if (s.pageStarts.length > 0) {
-        s.pageIndex = findPageIndexByCursor(s.pageStarts, anchor);
-        render();
-      }
-    }
-    function closeReaderAdjust(restoreChrome = false) {
-      if (s.previewFromAdjust) finalizeReaderAdjustRebuild();
-      readerAdjustOverlay.classList.remove("open");
-      readerAdjustOverlay.setAttribute("aria-hidden", "true");
-      if (restoreChrome && !s.chromeVisible) {
-        s.chromeVisible = true;
-        applyChromeVisibility();
-        syncCanvasTapLayerLayout();
-      }
-      openDrawer();
-    }
-    function openReaderAdjust() {
-      closeDrawer();
-      if (s.chromeVisible) {
-        s.chromeVisible = false;
-        applyChromeVisibility();
-        syncCanvasTapLayerLayout();
-      }
-      s.adjustAnchorCursor = s.pageStarts[s.pageIndex] ? { ...s.pageStarts[s.pageIndex] } : { bi: 0, off: 0 };
-      s.previewFromAdjust = true;
-      syncReaderAdjustUi();
-      readerAdjustOverlay.classList.add("open");
-      readerAdjustOverlay.setAttribute("aria-hidden", "false");
-    }
-    function toggleRemoveSingleEmptyParagraph() {
-      s.removeSingleEmptyParagraph = !s.removeSingleEmptyParagraph;
-      updateRemoveSingleEmptyParagraphUi();
-      s.pagedBlocks = applyEmptyParagraphFilter(blocks, s.removeSingleEmptyParagraph);
-      if (!s.previewFromAdjust) {
-        s.pageIndex = 0;
-        s.lastCanvasW = -1;
-        s.lastCanvasH = -1;
-      }
-      render();
-    }
-    function closePageJump() {
-      pageJumpOverlay.classList.remove("open");
-      pageJumpOverlay.setAttribute("aria-hidden", "true");
-      pageJumpInput.blur();
-    }
-    function openPageJump() {
-      const total = s.pageStarts.length;
-      if (total === 0) return;
-      pageJumpInput.value = String(s.pageIndex + 1);
-      pageJumpTotalEl.textContent = String(total);
-      pageJumpInput.min = "1";
-      pageJumpInput.max = String(total);
-      pageJumpOverlay.classList.add("open");
-      pageJumpOverlay.setAttribute("aria-hidden", "false");
-      requestAnimationFrame(() => {
-        pageJumpInput.focus();
-        pageJumpInput.select();
-      });
-    }
-    function submitPageJump() {
-      const total = s.pageStarts.length;
-      if (total === 0) return;
-      const raw = parseInt(String(pageJumpInput.value), 10);
-      if (Number.isNaN(raw)) {
-        closePageJump();
-        return;
-      }
-      s.pageIndex = Math.max(1, Math.min(total, raw)) - 1;
-      closePageJump();
-      render();
-    }
-    function handleSideTapPaging() {
-      if (s.suppressNextSideTap) {
-        s.suppressNextSideTap = false;
-        return;
-      }
-      if (s.pageIndex >= s.pageStarts.length - 1) confirmGoNextChapter();
-      else goNextPage();
     }
     function handleSwipePointerDown(e) {
       if (e.pointerType === "mouse" && e.button !== 0) return;
-      s.swipeStartX = e.clientX;
-      s.swipeStartY = e.clientY;
+      state.swipeStartX = e.clientX;
+      state.swipeStartY = e.clientY;
       e.currentTarget.setPointerCapture?.(e.pointerId);
     }
     function resetSwipeTracking() {
-      s.swipeStartX = null;
-      s.swipeStartY = null;
+      state.swipeStartX = null;
+      state.swipeStartY = null;
     }
     function handleSwipePointerUp(e) {
-      if (s.swipeStartX === null || s.swipeStartY === null) return;
-      const dx = e.clientX - s.swipeStartX;
-      const dy = e.clientY - s.swipeStartY;
+      if (state.swipeStartX === null || state.swipeStartY === null) return;
+      const dx = e.clientX - state.swipeStartX;
+      const dy = e.clientY - state.swipeStartY;
       resetSwipeTracking();
       const swipeThresholdPx = 36;
       if (Math.abs(dx) < swipeThresholdPx) return;
       if (Math.abs(dx) <= Math.abs(dy)) return;
-      s.suppressNextSideTap = true;
+      state.suppressNextSideTap = true;
       if (dx < 0) {
-        if (s.pageIndex >= s.pageStarts.length - 1) confirmGoNextChapter();
-        else goNextPage();
+        if (state.pageIndex >= state.pageStarts.length - 1) {
+          ctx.confirmGoNextChapter();
+        } else {
+          ctx.goNextPage();
+        }
         return;
       }
-      if (s.pageIndex <= 0) confirmGoPrevChapter();
-      else goPrevPage();
+      if (state.pageIndex <= 0) {
+        ctx.confirmGoPrevChapter();
+      } else {
+        ctx.goPrevPage();
+      }
     }
     function handleCanvasTapWheel(e) {
       const maxScrollTop = canvasWrap.scrollHeight - canvasWrap.clientHeight;
       if (maxScrollTop <= 0) return;
-      const nextScrollTop = Math.max(0, Math.min(maxScrollTop, canvasWrap.scrollTop + e.deltaY));
+      const nextScrollTop = Math.max(
+        0,
+        Math.min(maxScrollTop, canvasWrap.scrollTop + e.deltaY)
+      );
       if (nextScrollTop === canvasWrap.scrollTop) return;
       e.preventDefault();
       canvasWrap.scrollTop = nextScrollTop;
     }
     function handleRightClickPrevPage(e) {
       e.preventDefault();
-      if (s.pageIndex <= 0) {
-        confirmGoPrevChapter();
+      if (state.pageIndex <= 0) {
+        ctx.confirmGoPrevChapter();
         return;
       }
-      goPrevPage();
+      ctx.goPrevPage();
     }
     function isEditableTarget(target) {
       const el = target;
@@ -3088,21 +2694,20 @@
     const handleReaderHotkeys = (e) => {
       if (e.key === "Escape") {
         if (drawerOverlay.classList.contains("open")) {
-          closeDrawer();
+          ctx.closeDrawer();
           return;
         }
         if (pageJumpOverlay.classList.contains("open")) {
-          closePageJump();
+          ctx.closePageJump();
           return;
         }
         if (readerAdjustOverlay.classList.contains("open")) {
-          closeReaderAdjust();
+          ctx.closeReaderAdjust(false, false);
+          ctx.openDrawer();
           return;
         }
-        if (!s.chromeVisible) {
-          s.chromeVisible = true;
-          applyChromeVisibility();
-          syncCanvasTapLayerLayout();
+        if (!state.chromeVisible) {
+          ctx.toggleChrome();
         }
         return;
       }
@@ -3111,33 +2716,174 @@
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        if (s.pageIndex <= 0) confirmGoPrevChapter();
-        else goPrevPage();
+        if (state.pageIndex <= 0) {
+          ctx.confirmGoPrevChapter();
+        } else {
+          ctx.goPrevPage();
+        }
         return;
       }
       if (e.key === "ArrowRight") {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        if (s.pageIndex >= s.pageStarts.length - 1) confirmGoNextChapter();
-        else goNextPage();
+        if (state.pageIndex >= state.pageStarts.length - 1) {
+          ctx.confirmGoNextChapter();
+        } else {
+          ctx.goNextPage();
+        }
         return;
       }
       if (e.key.toLowerCase() === "f") {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        toggleFullscreen();
+        if (document.fullscreenElement) {
+          void document.exitFullscreen().catch(() => {
+          });
+        } else {
+          void refs.readerRoot.requestFullscreen().catch(() => {
+          });
+        }
       }
     };
-    function render() {
-      updateResponsiveChrome();
+    function bindAll(signal) {
+      const {
+        btnTapPrevPage,
+        btnTapChrome,
+        btnTapNextPage
+      } = refs;
+      window.addEventListener("keydown", handleReaderHotkeys, {
+        capture: true,
+        signal
+      });
+      window.addEventListener(
+        "keyup",
+        (e) => {
+          if (!shouldInterceptReaderHotkey(e)) return;
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        },
+        { capture: true, signal }
+      );
+      btnTapPrevPage.addEventListener("click", handleSideTap, { signal });
+      btnTapPrevPage.addEventListener("pointerdown", handleSwipePointerDown, {
+        signal
+      });
+      btnTapPrevPage.addEventListener("pointerup", handleSwipePointerUp, {
+        signal
+      });
+      btnTapPrevPage.addEventListener("pointercancel", resetSwipeTracking, {
+        signal
+      });
+      btnTapPrevPage.addEventListener("wheel", handleCanvasTapWheel, {
+        passive: false,
+        signal
+      });
+      btnTapPrevPage.addEventListener("contextmenu", handleRightClickPrevPage, {
+        signal
+      });
+      btnTapChrome.addEventListener("click", ctx.toggleChrome, { signal });
+      btnTapChrome.addEventListener("pointerdown", handleSwipePointerDown, {
+        signal
+      });
+      btnTapChrome.addEventListener("pointerup", handleSwipePointerUp, { signal });
+      btnTapChrome.addEventListener("pointercancel", resetSwipeTracking, {
+        signal
+      });
+      btnTapChrome.addEventListener("wheel", handleCanvasTapWheel, {
+        passive: false,
+        signal
+      });
+      btnTapChrome.addEventListener("contextmenu", handleRightClickPrevPage, {
+        signal
+      });
+      btnTapNextPage.addEventListener("click", handleSideTap, { signal });
+      btnTapNextPage.addEventListener("pointerdown", handleSwipePointerDown, {
+        signal
+      });
+      btnTapNextPage.addEventListener("pointerup", handleSwipePointerUp, {
+        signal
+      });
+      btnTapNextPage.addEventListener("pointercancel", resetSwipeTracking, {
+        signal
+      });
+      btnTapNextPage.addEventListener("wheel", handleCanvasTapWheel, {
+        passive: false,
+        signal
+      });
+      btnTapNextPage.addEventListener("contextmenu", handleRightClickPrevPage, {
+        signal
+      });
+    }
+    return {
+      handleSideTap,
+      handleSwipe: {
+        down: handleSwipePointerDown,
+        up: handleSwipePointerUp,
+        reset: resetSwipeTracking
+      },
+      handleWheel: handleCanvasTapWheel,
+      handleContextMenu: handleRightClickPrevPage,
+      handleKeyboard: handleReaderHotkeys,
+      bindAll
+    };
+  }
+
+  // src/reader/renderCanvas.ts
+  function ellipsizeToWidth(ctx, raw, maxWidth) {
+    if (maxWidth <= 0) return "";
+    if (ctx.measureText(raw).width <= maxWidth) return raw;
+    const ellipsis = "...";
+    const ellipsisW = ctx.measureText(ellipsis).width;
+    if (ellipsisW >= maxWidth) return ellipsis;
+    let lo = 0;
+    let hi = raw.length;
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      const candidate = raw.slice(0, mid) + ellipsis;
+      if (ctx.measureText(candidate).width <= maxWidth) {
+        lo = mid;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    return raw.slice(0, lo) + ellipsis;
+  }
+  function drawBottomMetadata(ctx, height, title, pageLabel, settings, textLeft, textWidth) {
+    const metaFontSize = 13;
+    const metaY = Math.max(metaFontSize, height - Math.max(settings.pagePaddingY / 2, metaFontSize));
+    const metaGap = 12;
+    ctx.textBaseline = "middle";
+    ctx.font = `${metaFontSize}px ${settings.fontFamily}`;
+    ctx.fillStyle = "#666";
+    const rightW = ctx.measureText(pageLabel).width;
+    const rightX = textLeft + textWidth;
+    ctx.textAlign = "right";
+    ctx.fillText(pageLabel, rightX, metaY);
+    const titleMaxW = Math.max(0, textWidth - rightW - metaGap);
+    const metaTitle = ellipsizeToWidth(ctx, title, titleMaxW);
+    ctx.textAlign = "left";
+    ctx.fillText(metaTitle, textLeft, metaY);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "#111";
+    ctx.font = `${settings.fontSize}px ${settings.fontFamily}`;
+  }
+
+  // src/reader/render.ts
+  function createRenderer(ctx) {
+    const { state: s, refs, blocks, render: _render, chapterNav } = ctx;
+    const { canvasWrap, canvas } = refs;
+    return function render() {
+      ctx.updateResponsiveChrome();
       const dpr = window.devicePixelRatio || 1;
       const width = canvasWrap.clientWidth;
       const viewportHeight = canvasWrap.clientHeight;
       if (width === 0 || viewportHeight === 0) return;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      const canvasCtx = canvas.getContext("2d");
+      if (!canvasCtx) return;
       const maxHeight = Math.max(0, viewportHeight - s.currentReaderSettings.pagePaddingY * 2);
       const availableTextWidth = Math.max(0, width - s.currentReaderSettings.pagePaddingX * 2);
       const textWidth = Math.min(availableTextWidth, s.currentReaderSettings.pageMaxWidth);
@@ -3157,27 +2903,32 @@
       const sameSize = !useAdjustPreview && s.pageStarts.length > 0 && width === s.lastCanvasW && viewportHeight === s.lastCanvasH;
       if (!sameSize) {
         if (!useAdjustPreview) {
-          s.pageStarts = buildPageStarts(ctx, s.pagedBlocks, layout, { imagePlaceholderText: "\u3010\u5716\u3011", getImageRenderInfo });
+          s.pageStarts = buildPageStarts(canvasCtx, s.pagedBlocks, layout, {
+            imagePlaceholderText: "\u3010\u5716\u3011",
+            getImageRenderInfo: ctx.getImageRenderInfo
+          });
           s.lastCanvasW = width;
           s.lastCanvasH = viewportHeight;
-          if (s.pendingRestorePageIndex !== null) {
-            s.pageIndex = s.pendingRestorePageIndex;
-            s.pendingRestorePageIndex = null;
+          if (s.pendingRestoreCursor !== null) {
+            s.pageIndex = findPageIndexByCursor(s.pageStarts, s.pendingRestoreCursor);
+            s.pendingRestoreCursor = null;
           }
           s.pageIndex = Math.min(s.pageIndex, Math.max(0, s.pageStarts.length - 1));
         }
       }
-      updatePageChrome();
-      syncCanvasTapLayerLayout();
-      if (!useAdjustPreview) saveCurrentPageIndex2();
+      ctx.updatePageChrome();
+      ctx.syncCanvasTapLayerLayout();
+      if (!useAdjustPreview) ctx.saveCurrentPosition();
       const startCursor = useAdjustPreview ? s.adjustAnchorCursor : s.pageStarts[s.pageIndex];
       if (!startCursor) return;
       if (!useAdjustPreview && s.pageStarts.length === 0) return;
       let drawHeight = viewportHeight;
       const startBlock = s.pagedBlocks[startCursor.bi];
       if (startBlock?.type === "img") {
-        const info = getImageRenderInfo(startBlock.src, layout.maxWidth);
-        if (info.ready && info.drawHeight > layout.maxHeight) drawHeight = s.currentReaderSettings.pagePaddingY * 2 + info.drawHeight;
+        const info = ctx.getImageRenderInfo(startBlock.src, layout.maxWidth);
+        if (info.ready && info.drawHeight > layout.maxHeight) {
+          drawHeight = s.currentReaderSettings.pagePaddingY * 2 + info.drawHeight;
+        }
       }
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(drawHeight * dpr);
@@ -3187,121 +2938,658 @@
         canvasWrap.scrollTop = 0;
         s.lastRenderedPageIndex = s.pageIndex;
       }
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, width, drawHeight);
-      ctx.fillStyle = "#111";
-      ctx.textBaseline = "top";
-      ctx.font = `${s.currentReaderSettings.fontSize}px ${s.currentReaderSettings.fontFamily}`;
-      walkOnePage(ctx, s.pagedBlocks, startCursor, layout, true, {
+      canvasCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvasCtx.clearRect(0, 0, width, drawHeight);
+      canvasCtx.fillStyle = "#111";
+      canvasCtx.textBaseline = "top";
+      canvasCtx.font = `${s.currentReaderSettings.fontSize}px ${s.currentReaderSettings.fontFamily}`;
+      walkOnePage(canvasCtx, s.pagedBlocks, startCursor, layout, true, {
         imagePlaceholderText: "\u3010\u5716\u3011",
-        getImageRenderInfo,
+        getImageRenderInfo: ctx.getImageRenderInfo,
         drawImage: (src, x, y, w, h) => {
-          const entry = ensureImage(src);
+          const entry = ctx.ensureImage(src);
           if (entry.status !== "loaded") {
-            ctx.fillText("\u3010\u5716\u3011", x, y);
+            canvasCtx.fillText("\u3010\u5716\u3011", x, y);
             return;
           }
-          ctx.drawImage(entry.img, x, y, w, h);
+          canvasCtx.drawImage(entry.img, x, y, w, h);
         }
       });
-      drawBottomMetadata(ctx, drawHeight, title, `${s.pageIndex + 1} / ${s.pageStarts.length}`, s.currentReaderSettings, textLeft, textWidth);
+      drawBottomMetadata(
+        canvasCtx,
+        drawHeight,
+        refs.readerRoot.querySelector(".esj-header-title")?.textContent || "",
+        `${s.pageIndex + 1} / ${s.pageStarts.length}`,
+        s.currentReaderSettings,
+        textLeft,
+        textWidth
+      );
+    };
+  }
+
+  // src/reader/uiSync.ts
+  function syncFontSourceUi(ctx) {
+    const { state: s, refs } = ctx;
+    const { selectFontSource, selectLocalFont, fontLocalRow, fontWebControls } = refs;
+    selectFontSource.value = s.fontSource;
+    selectLocalFont.disabled = s.fontSource !== "local";
+    fontLocalRow.classList.toggle("hidden", s.fontSource !== "local");
+    fontWebControls.classList.toggle("open", s.fontSource === "web");
+  }
+  function syncLocalFontSelectUi(ctx) {
+    const { state: s, refs } = ctx;
+    const { selectLocalFont } = refs;
+    const match = LOCAL_FONT_OPTIONS.find((opt) => opt.value === s.currentReaderSettings.fontFamily);
+    if (match) {
+      selectLocalFont.value = match.value;
+      return;
     }
-    btnHeaderMenu.addEventListener("click", () => {
-      if (drawerOverlay.classList.contains("open")) closeDrawer();
-      else openDrawer();
-    });
-    btnHeaderFullscreen.addEventListener("click", toggleFullscreen);
-    drawerBackdrop.addEventListener("click", closeDrawer);
-    btnFooterPageJump.addEventListener("click", openPageJump);
-    pageJumpBackdrop.addEventListener("click", closePageJump);
-    pageJumpCancel.addEventListener("click", closePageJump);
-    pageJumpOk.addEventListener("click", submitPageJump);
-    pageJumpInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        submitPageJump();
+    selectLocalFont.value = "";
+  }
+  function syncReaderAdjustUi(ctx) {
+    const { state: s, refs } = ctx;
+    function syncOne(key, valueEl, rangeEl, decBtn, incBtn) {
+      const limits = READER_LIMITS[key];
+      const value = s.currentReaderSettings[key];
+      valueEl.textContent = key === "lineHeight" ? formatLineHeight(value) : String(value);
+      rangeEl.min = String(limits.min);
+      rangeEl.max = String(limits.max);
+      rangeEl.step = String(limits.step);
+      rangeEl.value = String(value);
+      decBtn.disabled = value <= limits.min;
+      incBtn.disabled = value >= limits.max;
+    }
+    syncOne(
+      "fontSize",
+      refs.readerAdjustFontValue,
+      refs.rangeReaderAdjustFont,
+      refs.btnReaderAdjustFontDec,
+      refs.btnReaderAdjustFontInc
+    );
+    syncOne(
+      "lineHeight",
+      refs.readerAdjustLineHeightValue,
+      refs.rangeReaderAdjustLineHeight,
+      refs.btnReaderAdjustLineHeightDec,
+      refs.btnReaderAdjustLineHeightInc
+    );
+    syncOne(
+      "paragraphSpacing",
+      refs.readerAdjustParaSpacingValue,
+      refs.rangeReaderAdjustParaSpacing,
+      refs.btnReaderAdjustParaSpacingDec,
+      refs.btnReaderAdjustParaSpacingInc
+    );
+    syncOne(
+      "pagePaddingX",
+      refs.readerAdjustPagePaddingXValue,
+      refs.rangeReaderAdjustPagePaddingX,
+      refs.btnReaderAdjustPagePaddingXDec,
+      refs.btnReaderAdjustPagePaddingXInc
+    );
+    syncOne(
+      "pagePaddingY",
+      refs.readerAdjustPagePaddingYValue,
+      refs.rangeReaderAdjustPagePaddingY,
+      refs.btnReaderAdjustPagePaddingYDec,
+      refs.btnReaderAdjustPagePaddingYInc
+    );
+    syncOne(
+      "pageMaxWidth",
+      refs.readerAdjustPageMaxWidthValue,
+      refs.rangeReaderAdjustPageMaxWidth,
+      refs.btnReaderAdjustPageMaxWidthDec,
+      refs.btnReaderAdjustPageMaxWidthInc
+    );
+  }
+  function updateReaderSettingsUi(ctx) {
+    const { state: s, refs } = ctx;
+    refs.readerSettingFontValue.textContent = `${s.currentReaderSettings.fontSize}`;
+    refs.readerSettingLineHeightValue.textContent = formatLineHeight(s.currentReaderSettings.lineHeight);
+    refs.readerSettingParaSpacingValue.textContent = `${s.currentReaderSettings.paragraphSpacing}`;
+    refs.readerSettingPagePaddingXValue.textContent = `${s.currentReaderSettings.pagePaddingX}`;
+    refs.readerSettingPagePaddingYValue.textContent = `${s.currentReaderSettings.pagePaddingY}`;
+    refs.readerSettingPageMaxWidthValue.textContent = `${s.currentReaderSettings.pageMaxWidth}`;
+    syncLocalFontSelectUi(ctx);
+    syncReaderAdjustUi(ctx);
+    refs.btnProfileRestore.disabled = !s.hasSavedProfile;
+  }
+  function updateProfileUi(ctx) {
+    const { state: s, refs } = ctx;
+    if (!s.savedProfile) {
+      refs.profileFontValue.textContent = "-";
+      refs.profileLineHeightValue.textContent = "-";
+      refs.profileParaSpacingValue.textContent = "-";
+      refs.profilePagePaddingXValue.textContent = "-";
+      refs.profilePagePaddingYValue.textContent = "-";
+      refs.profilePageMaxWidthValue.textContent = "-";
+      refs.profileRemoveSingleEmptyValue.textContent = "-";
+      return;
+    }
+    refs.profileFontValue.textContent = String(s.savedProfile.fontSize);
+    refs.profileLineHeightValue.textContent = formatLineHeight(s.savedProfile.lineHeight);
+    refs.profileParaSpacingValue.textContent = String(s.savedProfile.paragraphSpacing);
+    refs.profilePagePaddingXValue.textContent = String(s.savedProfile.pagePaddingX);
+    refs.profilePagePaddingYValue.textContent = String(s.savedProfile.pagePaddingY);
+    refs.profilePageMaxWidthValue.textContent = String(s.savedProfile.pageMaxWidth);
+    refs.profileRemoveSingleEmptyValue.textContent = s.savedProfile.removeSingleEmptyParagraph ? "ON" : "OFF";
+  }
+  function updateRemoveSingleEmptyParagraphUi(ctx) {
+    const { state: s, refs } = ctx;
+    refs.btnRemoveSingleEmptyToggle.setAttribute("aria-pressed", s.removeSingleEmptyParagraph ? "true" : "false");
+    refs.iconRemoveSingleEmptyCheckEl.style.display = s.removeSingleEmptyParagraph ? "" : "none";
+  }
+  function updateFullscreenPromptUi(ctx) {
+    const { state: s, refs } = ctx;
+    refs.btnFullscreenPromptToggle.setAttribute("aria-pressed", s.showFullscreenPrompt ? "true" : "false");
+    refs.iconFullscreenPromptCheckEl.style.display = s.showFullscreenPrompt ? "" : "none";
+  }
+  function syncHeaderFullscreenUi(ctx) {
+    const { refs } = ctx;
+    const isFullscreen = Boolean(document.fullscreenElement);
+    refs.btnHeaderFullscreen.setAttribute("aria-pressed", isFullscreen ? "true" : "false");
+    refs.btnHeaderFullscreen.setAttribute("aria-label", isFullscreen ? "\u96E2\u958B\u5168\u87A2\u5E55" : "\u9032\u5165\u5168\u87A2\u5E55");
+    refs.iconHeaderFullscreenExpand.style.display = isFullscreen ? "none" : "";
+    refs.iconHeaderFullscreenShrink.style.display = isFullscreen ? "" : "none";
+  }
+  function updatePageChrome(ctx) {
+    const { state: s, refs, chapterNav } = ctx;
+    const total = s.pageStarts.length;
+    if (total === 0) {
+      refs.footerPageCur.textContent = "0";
+      refs.footerPageTotal.textContent = "0";
+      refs.btnFooterPageJump.disabled = true;
+      refs.pageJumpTotalEl.textContent = "0";
+      refs.pageJumpInput.removeAttribute("max");
+      refs.btnPrevPage.disabled = true;
+      refs.btnNextPage.disabled = true;
+      return;
+    }
+    refs.footerPageCur.textContent = String(s.pageIndex + 1);
+    refs.footerPageTotal.textContent = String(total);
+    refs.btnFooterPageJump.disabled = false;
+    refs.pageJumpTotalEl.textContent = String(total);
+    refs.pageJumpInput.max = String(total);
+    refs.pageJumpInput.min = "1";
+    refs.btnPrevPage.disabled = s.pageIndex <= 0;
+    refs.btnNextPage.disabled = s.pageIndex >= total - 1;
+  }
+
+  // src/reader/chromeManager.ts
+  function setIconSize(el, size) {
+    if (!el) return;
+    el.setAttribute("width", String(size));
+    el.setAttribute("height", String(size));
+  }
+  function applyChromeSettings(ctx, settings) {
+    ctx.state.activeChromeSettings = settings;
+    const { refs } = ctx;
+    const { readerRoot } = refs;
+    readerRoot.style.setProperty("--esj-header-h", `${settings.headerHeight}px`);
+    readerRoot.style.setProperty("--esj-footer-h", `${settings.footerHeight}px`);
+    readerRoot.style.setProperty("--esj-header-gap", `${settings.headerGap}px`);
+    readerRoot.style.setProperty("--esj-header-pad-l", `${settings.headerPadLeft}px`);
+    readerRoot.style.setProperty("--esj-header-pad-r", `${settings.headerPadRight}px`);
+    readerRoot.style.setProperty("--esj-header-menu-btn-size", `${settings.headerMenuButtonSize}px`);
+    readerRoot.style.setProperty("--esj-header-title-font-size", `${settings.headerTitleFontSize}px`);
+    readerRoot.style.setProperty("--esj-header-page-font-size", `${settings.headerPageFontSize}px`);
+    readerRoot.style.setProperty("--esj-footer-chapter-btn-width", `${settings.footerChapterButtonWidth}px`);
+    readerRoot.style.setProperty("--esj-footer-chapter-btn-max-width", `${settings.footerChapterButtonMaxWidth}px`);
+    readerRoot.style.setProperty("--esj-footer-chapter-btn-pad-x", `${settings.footerChapterButtonPadX}px`);
+    readerRoot.style.setProperty("--esj-footer-page-font-size", `${settings.footerPageFontSize}px`);
+    readerRoot.style.setProperty("--esj-footer-pagecell-pad-x", `${settings.footerPageCellPadX}px`);
+    readerRoot.style.setProperty("--esj-footer-page-btn-pad-y", `${settings.footerPageButtonPadY}px`);
+    readerRoot.style.setProperty("--esj-footer-page-btn-pad-x", `${settings.footerPageButtonPadX}px`);
+    setIconSize(refs.iconHeaderMenu, settings.iconMenuSize);
+    setIconSize(refs.iconHeaderFullscreenExpand, settings.iconMenuSize);
+    setIconSize(refs.iconHeaderFullscreenShrink, settings.iconMenuSize);
+    setIconSize(refs.iconTocEl, settings.iconTableOfContentsSize);
+    setIconSize(refs.iconPrevChapEl, settings.iconChapterSize);
+    setIconSize(refs.iconNextChapEl, settings.iconChapterSize);
+    setIconSize(refs.iconPrevPageEl, settings.iconPageSize);
+    setIconSize(refs.iconNextPageEl, settings.iconPageSize);
+    setIconSize(refs.iconFooterPageJumpEl, settings.iconPageSize);
+  }
+  function applyChromeVisibility(ctx) {
+    ctx.refs.readerRoot.classList.toggle("esj-chrome-hidden", !ctx.state.chromeVisible);
+  }
+  function updateResponsiveChrome(ctx) {
+    const preset = getChromePreset(window.innerWidth);
+    if (preset === ctx.state.activeChromePreset) return;
+    ctx.state.activeChromePreset = preset;
+    applyChromeSettings(ctx, getChromeSettingsForPreset(preset));
+    syncCanvasTapLayerLayout(ctx);
+  }
+  function toggleChrome(ctx) {
+    ctx.state.chromeVisible = !ctx.state.chromeVisible;
+    applyChromeVisibility(ctx);
+    syncCanvasTapLayerLayout(ctx);
+  }
+  function syncCanvasTapLayerLayout(ctx) {
+    const { refs, state, chapterNav } = ctx;
+    const { canvasWrap, footerPageCell, btnTapPrevPage, btnTapChrome, btnTapNextPage } = refs;
+    const wrapRect = canvasWrap.getBoundingClientRect();
+    const w = wrapRect.width;
+    if (w <= 0) return;
+    const topPx = state.chromeVisible ? state.activeChromeSettings.headerHeight : 0;
+    const bottomPx = state.chromeVisible ? state.activeChromeSettings.footerHeight : 0;
+    let leftW, midLeft, midW, rightStart, rightW;
+    if (state.chromeVisible) {
+      const cellRect = footerPageCell.getBoundingClientRect();
+      leftW = Math.max(0, Math.round(cellRect.left - wrapRect.left));
+      midLeft = leftW;
+      midW = Math.max(0, Math.round(cellRect.width));
+      rightStart = Math.max(0, Math.round(cellRect.right - wrapRect.left));
+      rightW = Math.max(0, Math.round(wrapRect.right - cellRect.right));
+    } else {
+      const third = Math.floor(w / 3);
+      leftW = third;
+      midLeft = third;
+      midW = third;
+      rightStart = third * 2;
+      rightW = w - third * 2;
+    }
+    const vTop = `${topPx}px`;
+    const vBottom = `${bottomPx}px`;
+    btnTapPrevPage.style.top = vTop;
+    btnTapPrevPage.style.bottom = vBottom;
+    btnTapPrevPage.style.left = "0px";
+    btnTapPrevPage.style.width = `${leftW}px`;
+    btnTapChrome.style.top = vTop;
+    btnTapChrome.style.bottom = vBottom;
+    btnTapChrome.style.left = `${midLeft}px`;
+    btnTapChrome.style.width = `${midW}px`;
+    btnTapNextPage.style.top = vTop;
+    btnTapNextPage.style.bottom = vBottom;
+    btnTapNextPage.style.left = `${rightStart}px`;
+    btnTapNextPage.style.width = `${rightW}px`;
+    const total = state.pageStarts.length;
+    btnTapPrevPage.disabled = !(total > 0 && (state.pageIndex > 0 || Boolean(chapterNav.prev)));
+    btnTapNextPage.disabled = !(total > 0 && (state.pageIndex < total - 1 || Boolean(chapterNav.next)));
+  }
+
+  // src/reader/panelManager.ts
+  function openDrawer(ctx) {
+    const { refs } = ctx;
+    refs.drawerOverlay.classList.add("open");
+    refs.drawerOverlay.setAttribute("aria-hidden", "false");
+    refs.btnHeaderMenu.setAttribute("aria-expanded", "true");
+  }
+  function closeDrawer(ctx) {
+    const { refs } = ctx;
+    refs.drawerOverlay.classList.remove("open");
+    refs.drawerOverlay.setAttribute("aria-hidden", "true");
+    refs.btnHeaderMenu.setAttribute("aria-expanded", "false");
+  }
+  function openReaderAdjust(ctx) {
+    const { state: s, refs } = ctx;
+    closeDrawer(ctx);
+    if (s.chromeVisible) {
+      s.chromeVisible = false;
+      applyChromeVisibility(ctx);
+      syncCanvasTapLayerLayout(ctx);
+    }
+    s.snapshotBeforeAdjust = { ...s.currentReaderSettings };
+    s.adjustAnchorCursor = s.pageStarts[s.pageIndex] ? { ...s.pageStarts[s.pageIndex] } : { bi: 0, off: 0 };
+    s.previewFromAdjust = true;
+    ctx.syncUi();
+    refs.readerAdjustOverlay.classList.add("open");
+    refs.readerAdjustOverlay.setAttribute("aria-hidden", "false");
+  }
+  function closeReaderAdjust(ctx, apply, hideDrawerAndChrome) {
+    const { refs } = ctx;
+    if (ctx.state.previewFromAdjust) {
+      if (apply) {
+        finalizeReaderAdjustRebuild(ctx);
+      } else {
+        cancelReaderAdjust(ctx);
       }
+    }
+    refs.readerAdjustOverlay.classList.remove("open");
+    refs.readerAdjustOverlay.setAttribute("aria-hidden", "true");
+    if (hideDrawerAndChrome) {
+      if (ctx.state.chromeVisible) {
+        ctx.state.chromeVisible = false;
+        applyChromeVisibility(ctx);
+        syncCanvasTapLayerLayout(ctx);
+      }
+      closeDrawer(ctx);
+    } else {
+      if (!ctx.state.chromeVisible) {
+        ctx.state.chromeVisible = true;
+        applyChromeVisibility(ctx);
+        syncCanvasTapLayerLayout(ctx);
+      }
+      openDrawer(ctx);
+    }
+  }
+  function cancelReaderAdjust(ctx) {
+    const { state: s } = ctx;
+    if (s.snapshotBeforeAdjust) {
+      s.currentReaderSettings = { ...s.snapshotBeforeAdjust };
+      s.snapshotBeforeAdjust = null;
+    }
+    s.previewFromAdjust = false;
+    s.adjustAnchorCursor = null;
+    ctx.syncUi();
+    clearCharWidthCache();
+    s.lastCanvasW = -1;
+    s.lastCanvasH = -1;
+    ctx.render();
+  }
+  function finalizeReaderAdjustRebuild(ctx) {
+    const { state: s } = ctx;
+    const anchor = s.adjustAnchorCursor;
+    s.previewFromAdjust = false;
+    s.adjustAnchorCursor = null;
+    if (!anchor) return;
+    s.lastCanvasW = -1;
+    s.lastCanvasH = -1;
+    ctx.render();
+    if (s.pageStarts.length > 0) {
+      s.pageIndex = findPageIndexByCursor(s.pageStarts, anchor);
+      ctx.render();
+    }
+  }
+  function openPageJump(ctx) {
+    const { state: s, refs } = ctx;
+    const total = s.pageStarts.length;
+    if (total === 0) return;
+    refs.pageJumpInput.value = String(s.pageIndex + 1);
+    refs.pageJumpTotalEl.textContent = String(total);
+    refs.pageJumpInput.min = "1";
+    refs.pageJumpInput.max = String(total);
+    refs.pageJumpOverlay.classList.add("open");
+    refs.pageJumpOverlay.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => {
+      refs.pageJumpInput.focus();
+      refs.pageJumpInput.select();
     });
-    pageJumpPanel.addEventListener("click", (e) => {
-      e.stopPropagation();
+  }
+  function closePageJump(ctx) {
+    const { refs } = ctx;
+    refs.pageJumpOverlay.classList.remove("open");
+    refs.pageJumpOverlay.setAttribute("aria-hidden", "true");
+    refs.pageJumpInput.blur();
+  }
+  function submitPageJump(ctx) {
+    const { state: s, refs, render } = ctx;
+    const total = s.pageStarts.length;
+    if (total === 0) return;
+    const raw = parseInt(String(refs.pageJumpInput.value), 10);
+    if (Number.isNaN(raw)) {
+      closePageJump(ctx);
+      return;
+    }
+    s.pageIndex = Math.max(1, Math.min(total, raw)) - 1;
+    closePageJump(ctx);
+    render();
+  }
+  function openFullscreenPrompt(ctx) {
+    const { refs } = ctx;
+    refs.fullscreenPromptOverlay.classList.add("open");
+    refs.fullscreenPromptOverlay.setAttribute("aria-hidden", "false");
+  }
+  function closeFullscreenPrompt(ctx) {
+    const { refs } = ctx;
+    refs.fullscreenPromptOverlay.classList.remove("open");
+    refs.fullscreenPromptOverlay.setAttribute("aria-hidden", "true");
+  }
+  function confirmFullscreen(ctx) {
+    const { state: s, refs } = ctx;
+    closeFullscreenPrompt(ctx);
+    if (s.chromeVisible) {
+      s.chromeVisible = false;
+      applyChromeVisibility(ctx);
+      syncCanvasTapLayerLayout(ctx);
+    }
+    closeDrawer(ctx);
+    void refs.readerRoot.requestFullscreen().catch(() => {
     });
-    readerAdjustBackdrop.addEventListener("click", () => {
-      closeReaderAdjust(true);
-    });
-    readerAdjustPanel.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
-    window.addEventListener("keydown", handleReaderHotkeys, { capture: true, signal: eventSignal });
-    window.addEventListener("keyup", (e) => {
-      if (!shouldInterceptReaderHotkey(e)) return;
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    }, { capture: true, signal: eventSignal });
-    btnPrevChap.addEventListener("click", () => {
-      if (!chapterNav.prev) return;
-      markFullscreenRestore();
+  }
+  function setReaderSettingsExpanded(ctx, expanded) {
+    const { state: s, refs } = ctx;
+    s.readerSettingsExpanded = expanded;
+    refs.btnReaderSettingsDropdown.setAttribute("aria-expanded", expanded ? "true" : "false");
+    refs.readerSettingsContent.classList.toggle("open", expanded);
+    refs.iconReaderSettingsChevronDownEl.style.display = expanded ? "none" : "";
+    refs.iconReaderSettingsChevronUpEl.style.display = expanded ? "" : "none";
+  }
+  function setProfileExpanded(ctx, expanded) {
+    const { state: s, refs } = ctx;
+    s.profileExpanded = expanded;
+    refs.btnProfileDropdown.setAttribute("aria-expanded", expanded ? "true" : "false");
+    refs.profileContent.classList.toggle("open", expanded);
+    refs.iconProfileChevronDownEl.style.display = expanded ? "none" : "";
+    refs.iconProfileChevronUpEl.style.display = expanded ? "" : "none";
+  }
+
+  // src/reader/pageNavigation.ts
+  function goPrevPage(ctx) {
+    const { state: s, render } = ctx;
+    if (s.pageIndex > 0) {
+      s.pageIndex -= 1;
+      render();
+    }
+  }
+  function goNextPage(ctx) {
+    const { state: s, render } = ctx;
+    if (s.pageIndex < s.pageStarts.length - 1) {
+      s.pageIndex += 1;
+      render();
+    }
+  }
+  function confirmGoPrevChapter(ctx) {
+    const { chapterNav } = ctx;
+    if (!chapterNav.prev) return;
+    if (window.confirm("\u5DF2\u5728\u7B2C\u4E00\u9801\uFF0C\u662F\u5426\u524D\u5F80\u4E0A\u4E00\u7AE0\uFF1F")) {
       window.location.href = chapterNav.prev;
-    });
-    btnPrevPage.addEventListener("click", goPrevPage);
-    btnNextPage.addEventListener("click", goNextPage);
-    btnTapPrevPage.addEventListener("click", handleSideTapPaging);
-    btnTapPrevPage.addEventListener("pointerdown", handleSwipePointerDown);
-    btnTapPrevPage.addEventListener("pointerup", handleSwipePointerUp);
-    btnTapPrevPage.addEventListener("pointercancel", resetSwipeTracking);
-    btnTapPrevPage.addEventListener("wheel", handleCanvasTapWheel, { passive: false });
-    btnTapPrevPage.addEventListener("contextmenu", handleRightClickPrevPage);
-    btnTapChrome.addEventListener("click", toggleChrome);
-    btnTapChrome.addEventListener("wheel", handleCanvasTapWheel, { passive: false });
-    btnTapChrome.addEventListener("contextmenu", handleRightClickPrevPage);
-    btnTapNextPage.addEventListener("click", handleSideTapPaging);
-    btnTapNextPage.addEventListener("pointerdown", handleSwipePointerDown);
-    btnTapNextPage.addEventListener("pointerup", handleSwipePointerUp);
-    btnTapNextPage.addEventListener("pointercancel", resetSwipeTracking);
-    btnTapNextPage.addEventListener("wheel", handleCanvasTapWheel, { passive: false });
-    btnTapNextPage.addEventListener("contextmenu", handleRightClickPrevPage);
-    btnReaderSettingsAdjust.addEventListener("click", openReaderAdjust);
-    btnReaderSettingsDropdown.addEventListener("click", () => {
-      setReaderSettingsExpanded(!s.readerSettingsExpanded);
-    });
-    selectFontSource.addEventListener("change", () => {
-      s.fontSource = selectFontSource.value === "web" ? "web" : "local";
-      syncFontSourceUi();
-    });
-    selectLocalFont.addEventListener("change", () => {
-      if (s.fontSource !== "local") return;
-      const next = selectLocalFont.value;
-      if (!next || next === s.currentReaderSettings.fontFamily) return;
-      s.currentReaderSettings.fontFamily = next;
-      updateReaderSettingsUi();
-      clearCharWidthCache();
+    }
+  }
+  function confirmGoNextChapter(ctx) {
+    const { chapterNav } = ctx;
+    if (!chapterNav.next) return;
+    if (window.confirm("\u5DF2\u5728\u6700\u5F8C\u4E00\u9801\uFF0C\u662F\u5426\u524D\u5F80\u4E0B\u4E00\u7AE0\uFF1F")) {
+      window.location.href = chapterNav.next;
+    }
+  }
+
+  // src/reader/settingsManager.ts
+  function adjustReaderSetting(ctx, key, delta) {
+    const { state: s, render } = ctx;
+    const limits = READER_LIMITS[key];
+    const next = clamp(roundByStep(s.currentReaderSettings[key] + delta, limits.step), limits.min, limits.max);
+    if (next === s.currentReaderSettings[key]) return;
+    s.currentReaderSettings[key] = next;
+    ctx.syncUi();
+    if (!s.previewFromAdjust) {
+      s.lastCanvasW = -1;
+      s.lastCanvasH = -1;
+    }
+    render();
+  }
+  function toggleRemoveSingleEmptyParagraph(ctx) {
+    const { state: s, blocks, render } = ctx;
+    s.removeSingleEmptyParagraph = !s.removeSingleEmptyParagraph;
+    ctx.syncUi();
+    s.pagedBlocks = applyEmptyParagraphFilter(blocks, s.removeSingleEmptyParagraph);
+    if (!s.previewFromAdjust) {
+      s.pageIndex = 0;
+      s.lastCanvasW = -1;
+      s.lastCanvasH = -1;
+    }
+    render();
+  }
+  async function applyWebFont(ctx, cssUrl, family) {
+    const { state: s, render } = ctx;
+    s.webFontLinkEl = ensureWebFontStylesheet(cssUrl, s.webFontLinkEl);
+    await loadWebFont(cssUrl, family);
+    s.currentReaderSettings.fontFamily = family;
+    s.fontSource = "web";
+    ctx.syncUi();
+    clearCharWidthCache();
+    s.lastCanvasW = -1;
+    s.lastCanvasH = -1;
+    render();
+    saveWebFontConfig({ cssUrl, family });
+  }
+
+  // src/imageCache.ts
+  function ensureImage(ctx, src) {
+    const { state: s, render } = ctx;
+    const cached = s.imageCache.get(src);
+    if (cached) return cached;
+    const img = new Image();
+    const entry = { img, status: "loading", naturalWidth: 0, naturalHeight: 0 };
+    img.onload = () => {
+      entry.status = "loaded";
+      entry.naturalWidth = img.naturalWidth || 0;
+      entry.naturalHeight = img.naturalHeight || 0;
       s.lastCanvasW = -1;
       s.lastCanvasH = -1;
       render();
+    };
+    img.onerror = () => {
+      entry.status = "error";
+      s.lastCanvasW = -1;
+      s.lastCanvasH = -1;
+      render();
+    };
+    img.src = src;
+    s.imageCache.set(src, entry);
+    return entry;
+  }
+  function getImageRenderInfo(ctx, src, maxWidth) {
+    const entry = ensureImage(ctx, src);
+    if (entry.status !== "loaded" || entry.naturalWidth <= 0 || entry.naturalHeight <= 0) {
+      return { ready: false, drawWidth: maxWidth, drawHeight: Math.max(80, Math.floor(maxWidth * 0.56)) };
+    }
+    const scale = maxWidth > 0 ? Math.min(1, maxWidth / entry.naturalWidth) : 1;
+    return {
+      ready: true,
+      drawWidth: Math.max(1, Math.floor(entry.naturalWidth * scale)),
+      drawHeight: Math.max(1, Math.floor(entry.naturalHeight * scale))
+    };
+  }
+
+  // src/main.ts
+  function main() {
+    const root = getForumContent();
+    if (!root) return;
+    const title = getChapterTitle();
+    const blocks = extractBlocksFromHtml(root.innerHTML);
+    const commentsRoot = getCommentsRoot();
+    const commentBlocks = commentsRoot ? extractCommentBlocksFromHtml(commentsRoot.innerHTML) : [];
+    const allBlocks = [...blocks, ...commentBlocks];
+    mountReader(title, allBlocks, getAdjacentChapterHrefs(), getNovelDetailHref());
+    console.info("[esj-pager]", title, "blocks:", allBlocks.length);
+  }
+  function mountReader(title, blocks, chapterNav, novelDetailHref) {
+    const refs = createReaderDom(title, novelDetailHref, chapterNav);
+    refs.style.textContent = buildReaderStyles();
+    document.head.appendChild(refs.style);
+    document.body.appendChild(refs.readerRoot);
+    const rootEl = document.documentElement;
+    const bodyEl = document.body;
+    const prevRootOverflow = rootEl.style.overflow;
+    const prevBodyOverflow = bodyEl.style.overflow;
+    rootEl.style.overflow = "hidden";
+    bodyEl.style.overflow = "hidden";
+    const eventAc = new AbortController();
+    window.addEventListener("pagehide", () => {
+      eventAc.abort();
+      rootEl.style.overflow = prevRootOverflow;
+      bodyEl.style.overflow = prevBodyOverflow;
+    }, { once: true });
+    const s = createReaderState(blocks);
+    const novelId = getNovelId();
+    const chapterKey = `${window.location.pathname}${window.location.search}`;
+    ["\u672C\u6A5F\u5B57\u9AD4", "Web Font"].forEach((text, i) => {
+      const option = document.createElement("option");
+      option.value = i === 0 ? "local" : "web";
+      option.textContent = text;
+      refs.selectFontSource.appendChild(option);
+    });
+    LOCAL_FONT_OPTIONS.forEach((option) => {
+      if (option.detectFamilies && !isAnyFontFamilyAvailable(option.detectFamilies)) return;
+      const el = document.createElement("option");
+      el.value = option.value;
+      el.textContent = option.label;
+      refs.selectLocalFont.appendChild(el);
+    });
+    const baseContext = { state: s, refs, blocks, chapterNav, novelId, chapterKey, render: () => {
+    } };
+    const renderContext = { ...baseContext, getImageRenderInfo: (src, maxWidth) => getImageRenderInfo(baseContext, src, maxWidth), ensureImage: (src) => ensureImage(baseContext, src), saveCurrentPosition: () => {
+    }, updatePageChrome: () => updatePageChrome(baseContext), syncCanvasTapLayerLayout: () => syncCanvasTapLayerLayout(baseContext), updateResponsiveChrome: () => updateResponsiveChrome(baseContext) };
+    const render = createRenderer(renderContext);
+    baseContext.render = render;
+    renderContext.render = render;
+    renderContext.saveCurrentPosition = createPositionSaver(s, novelId, chapterKey);
+    const syncUi = () => [syncFontSourceUi, updateReaderSettingsUi, updateProfileUi].forEach((fn) => fn(baseContext));
+    const saveReaderProfile2 = createProfileSaver(s, syncUi);
+    const loadSavedReaderProfile = createProfileLoader(s, syncUi, blocks, render);
+    const panelContext = { ...baseContext, syncUi, applyChromeVisibility: () => applyChromeVisibility(baseContext), syncCanvasTapLayerLayout: () => syncCanvasTapLayerLayout(baseContext) };
+    const settingsContext = { ...baseContext, syncUi };
+    const eventHandlerContext = { ...baseContext, goPrevPage: () => goPrevPage(baseContext), goNextPage: () => goNextPage(baseContext), confirmGoPrevChapter: () => confirmGoPrevChapter(baseContext), confirmGoNextChapter: () => confirmGoNextChapter(baseContext), toggleChrome: () => toggleChrome(baseContext), closeDrawer: () => closeDrawer(panelContext), openDrawer: () => openDrawer(panelContext), closePageJump: () => closePageJump(panelContext), closeReaderAdjust: (apply, hideDrawerAndChrome) => closeReaderAdjust(panelContext, apply, hideDrawerAndChrome) };
+    const eventHandlers = createEventHandlers(eventHandlerContext);
+    const toggleFullscreenPromptSetting = () => {
+      s.showFullscreenPrompt = !s.showFullscreenPrompt;
+      updateFullscreenPromptUi(baseContext);
+      saveFullscreenPromptSetting(s.showFullscreenPrompt);
+    };
+    const toggleFullscreen = () => document.fullscreenElement ? void document.exitFullscreen().catch(() => {
+    }) : void refs.readerRoot.requestFullscreen().catch(() => {
+    });
+    refs.btnHeaderMenu.addEventListener("click", () => refs.drawerOverlay.classList.contains("open") ? closeDrawer(panelContext) : openDrawer(panelContext));
+    refs.btnHeaderFullscreen.addEventListener("click", toggleFullscreen);
+    refs.drawerBackdrop.addEventListener("click", () => closeDrawer(panelContext));
+    refs.btnFooterPageJump.addEventListener("click", () => openPageJump(panelContext));
+    [refs.pageJumpBackdrop, refs.pageJumpCancel].forEach((el) => el.addEventListener("click", () => closePageJump(panelContext)));
+    refs.pageJumpOk.addEventListener("click", () => submitPageJump(panelContext));
+    refs.pageJumpInput.addEventListener("keydown", (e) => e.key === "Enter" && (e.preventDefault(), submitPageJump(panelContext)));
+    [refs.pageJumpPanel, refs.fullscreenPromptPanel, refs.readerAdjustPanel].forEach((el) => el.addEventListener("click", (e) => e.stopPropagation()));
+    refs.fullscreenPromptBackdrop.addEventListener("click", () => closeFullscreenPrompt(panelContext));
+    refs.btnFullscreenPromptCancel.addEventListener("click", () => closeFullscreenPrompt(panelContext));
+    refs.btnFullscreenPromptConfirm.addEventListener("click", () => confirmFullscreen(panelContext));
+    refs.btnFullscreenPromptToggle.addEventListener("click", toggleFullscreenPromptSetting);
+    refs.readerAdjustBackdrop.addEventListener("click", () => closeReaderAdjust(panelContext, false, false));
+    eventHandlers.bindAll(eventAc.signal);
+    refs.btnPrevChap.addEventListener("click", () => chapterNav.prev && (window.location.href = chapterNav.prev));
+    refs.btnPrevPage.addEventListener("click", () => goPrevPage(baseContext));
+    refs.btnNextPage.addEventListener("click", () => goNextPage(baseContext));
+    refs.btnNextChap.addEventListener("click", () => chapterNav.next && (window.location.href = chapterNav.next));
+    refs.btnReaderSettingsAdjust.addEventListener("click", () => openReaderAdjust(panelContext));
+    refs.btnReaderSettingsDropdown.addEventListener("click", () => setReaderSettingsExpanded(panelContext, !s.readerSettingsExpanded));
+    refs.selectFontSource.addEventListener("change", () => {
+      s.fontSource = refs.selectFontSource.value === "web" ? "web" : "local";
+      syncFontSourceUi(baseContext);
+    });
+    refs.selectLocalFont.addEventListener("change", () => {
+      if (s.fontSource !== "local") return;
+      const next = refs.selectLocalFont.value;
+      if (!next || next === s.currentReaderSettings.fontFamily) return;
+      s.currentReaderSettings.fontFamily = next;
+      updateReaderSettingsUi(baseContext);
+      clearCharWidthCache();
+      s.lastCanvasW = s.lastCanvasH = -1;
+      render();
     });
     const applyWebFontFromInputs = async () => {
-      const cssUrl = inputWebFontCssUrl.value.trim();
-      const family = inputWebFontFamily.value.trim();
-      if (!cssUrl || !family) {
-        window.alert("\u8ACB\u8F38\u5165 Web Font \u7684 CSS URL \u8207 font-family");
-        return;
-      }
-      if (!/^https:\/\//i.test(cssUrl)) {
-        window.alert("Web Font URL \u5FC5\u9808\u662F https://");
-        return;
-      }
-      btnApplyWebFont.disabled = true;
+      const cssUrl = refs.inputWebFontCssUrl.value.trim();
+      const family = refs.inputWebFontFamily.value.trim();
+      if (!cssUrl || !family) return window.alert("\u8ACB\u8F38\u5165 Web Font \u7684 CSS URL \u8207 font-family");
+      if (!/^https:\/\//i.test(cssUrl)) return window.alert("Web Font URL \u5FC5\u9808\u662F https://");
+      refs.btnApplyWebFont.disabled = true;
       try {
-        await applyWebFont(cssUrl, family);
+        await applyWebFont(settingsContext, cssUrl, family);
       } catch {
         window.alert("Web Font \u5957\u7528\u5931\u6557\uFF0C\u8ACB\u78BA\u8A8D URL \u8207 font-family");
       } finally {
-        btnApplyWebFont.disabled = false;
+        refs.btnApplyWebFont.disabled = false;
       }
     };
-    fontWebControls.addEventListener("click", (e) => {
-      const target = e.target;
-      const presetBtn = target?.closest(".esj-font-preset-btn");
+    refs.fontWebControls.addEventListener("click", (e) => {
+      const presetBtn = e.target?.closest(".esj-font-preset-btn");
       if (!presetBtn) return;
       const presetId = presetBtn.dataset.fontPreset ?? "";
       const row = presetBtn.closest(".esj-font-preset-row");
@@ -3309,93 +3597,86 @@
       const weight = Number(weightSelect?.value ?? 400);
       const config = getPresetWebFontConfig(presetId, weight);
       if (!config) return;
-      inputWebFontCssUrl.value = config.cssUrl;
-      inputWebFontFamily.value = config.family;
+      refs.inputWebFontCssUrl.value = config.cssUrl;
+      refs.inputWebFontFamily.value = config.family;
       void applyWebFontFromInputs();
     });
-    btnApplyWebFont.addEventListener("click", () => {
-      void applyWebFontFromInputs();
-    });
-    btnProfileDropdown.addEventListener("click", () => {
-      setProfileExpanded(!s.profileExpanded);
-    });
-    btnProfileSave.addEventListener("click", saveReaderProfile2);
-    btnProfileRestore.addEventListener("click", () => {
+    refs.btnApplyWebFont.addEventListener("click", () => void applyWebFontFromInputs());
+    refs.btnProfileDropdown.addEventListener("click", () => setProfileExpanded(panelContext, !s.profileExpanded));
+    refs.btnProfileSave.addEventListener("click", saveReaderProfile2);
+    refs.btnProfileRestore.addEventListener("click", () => {
       const changed = loadSavedReaderProfile();
-      if (!s.hasSavedProfile) {
-        window.alert("\u5C1A\u672A\u5132\u5B58\u8A2D\u5B9A\u6A94");
-        return;
-      }
+      if (!s.hasSavedProfile) return window.alert("\u5C1A\u672A\u5132\u5B58\u8A2D\u5B9A\u6A94");
       if (!changed) return;
       clearCharWidthCache();
-      s.lastCanvasW = -1;
-      s.lastCanvasH = -1;
+      s.lastCanvasW = s.lastCanvasH = -1;
       render();
     });
-    function applyReaderSettingFromSlider(key, rawValue) {
+    const applyReaderSettingFromSlider = (key, rawValue) => {
       const limits = READER_LIMITS[key];
       if (!Number.isFinite(rawValue)) return;
       const next = clamp(roundByStep(rawValue, limits.step), limits.min, limits.max);
       if (next === s.currentReaderSettings[key]) return;
       s.currentReaderSettings[key] = next;
-      updateReaderSettingsUi();
-      if (!s.previewFromAdjust) {
-        s.lastCanvasW = -1;
-        s.lastCanvasH = -1;
-      }
+      updateReaderSettingsUi(baseContext);
+      if (!s.previewFromAdjust) s.lastCanvasW = s.lastCanvasH = -1;
       render();
-    }
-    function bindAdjustRow(key, decBtn, incBtn, rangeEl) {
-      decBtn.addEventListener("click", () => {
-        adjustReaderSetting(key, -READER_LIMITS[key].step);
-      });
-      incBtn.addEventListener("click", () => {
-        adjustReaderSetting(key, READER_LIMITS[key].step);
-      });
-      rangeEl.addEventListener("input", () => {
-        applyReaderSettingFromSlider(key, Number(rangeEl.value));
-      });
-    }
-    bindAdjustRow("fontSize", btnReaderAdjustFontDec, btnReaderAdjustFontInc, rangeReaderAdjustFont);
-    bindAdjustRow("lineHeight", btnReaderAdjustLineHeightDec, btnReaderAdjustLineHeightInc, rangeReaderAdjustLineHeight);
-    bindAdjustRow("paragraphSpacing", btnReaderAdjustParaSpacingDec, btnReaderAdjustParaSpacingInc, rangeReaderAdjustParaSpacing);
-    bindAdjustRow("pagePaddingX", btnReaderAdjustPagePaddingXDec, btnReaderAdjustPagePaddingXInc, rangeReaderAdjustPagePaddingX);
-    bindAdjustRow("pagePaddingY", btnReaderAdjustPagePaddingYDec, btnReaderAdjustPagePaddingYInc, rangeReaderAdjustPagePaddingY);
-    bindAdjustRow("pageMaxWidth", btnReaderAdjustPageMaxWidthDec, btnReaderAdjustPageMaxWidthInc, rangeReaderAdjustPageMaxWidth);
-    btnReaderAdjustRemoveSingleEmpty.addEventListener("click", toggleRemoveSingleEmptyParagraph);
-    btnReaderAdjustApply.addEventListener("click", () => {
-      finalizeReaderAdjustRebuild();
-      closeReaderAdjust(true);
-    });
-    btnNextChap.addEventListener("click", () => {
-      if (!chapterNav.next) return;
-      markFullscreenRestore();
-      window.location.href = chapterNav.next;
-    });
-    updateRemoveSingleEmptyParagraphUi();
+    };
+    const bindAdjustRow = (key, decBtn, incBtn, rangeEl) => {
+      decBtn.addEventListener("click", () => adjustReaderSetting(settingsContext, key, -READER_LIMITS[key].step));
+      incBtn.addEventListener("click", () => adjustReaderSetting(settingsContext, key, READER_LIMITS[key].step));
+      rangeEl.addEventListener("input", () => applyReaderSettingFromSlider(key, Number(rangeEl.value)));
+    };
+    bindAdjustRow("fontSize", refs.btnReaderAdjustFontDec, refs.btnReaderAdjustFontInc, refs.rangeReaderAdjustFont);
+    bindAdjustRow("lineHeight", refs.btnReaderAdjustLineHeightDec, refs.btnReaderAdjustLineHeightInc, refs.rangeReaderAdjustLineHeight);
+    bindAdjustRow("paragraphSpacing", refs.btnReaderAdjustParaSpacingDec, refs.btnReaderAdjustParaSpacingInc, refs.rangeReaderAdjustParaSpacing);
+    bindAdjustRow("pagePaddingX", refs.btnReaderAdjustPagePaddingXDec, refs.btnReaderAdjustPagePaddingXInc, refs.rangeReaderAdjustPagePaddingX);
+    bindAdjustRow("pagePaddingY", refs.btnReaderAdjustPagePaddingYDec, refs.btnReaderAdjustPagePaddingYInc, refs.rangeReaderAdjustPagePaddingY);
+    bindAdjustRow("pageMaxWidth", refs.btnReaderAdjustPageMaxWidthDec, refs.btnReaderAdjustPageMaxWidthInc, refs.rangeReaderAdjustPageMaxWidth);
+    refs.btnRemoveSingleEmptyToggle.addEventListener("click", () => toggleRemoveSingleEmptyParagraph(settingsContext));
+    refs.btnReaderAdjustCancel.addEventListener("click", () => closeReaderAdjust(panelContext, false, false));
+    refs.btnReaderAdjustApply.addEventListener("click", () => closeReaderAdjust(panelContext, true, true));
+    updateRemoveSingleEmptyParagraphUi(baseContext);
+    s.showFullscreenPrompt = loadFullscreenPromptSetting();
+    updateFullscreenPromptUi(baseContext);
     loadSavedReaderProfile();
-    s.pendingRestorePageIndex = loadSavedPageIndex(novelId, chapterKey);
-    s.shouldRestoreFullscreenOnNextTap = loadFullscreenRestoreFlag();
+    s.pendingRestoreCursor = loadSavedCursor(novelId, chapterKey);
     const savedWebFont = loadWebFontConfig();
     if (savedWebFont) {
-      inputWebFontCssUrl.value = savedWebFont.cssUrl;
-      inputWebFontFamily.value = savedWebFont.family;
+      refs.inputWebFontCssUrl.value = savedWebFont.cssUrl;
+      refs.inputWebFontFamily.value = savedWebFont.family;
     }
-    setReaderSettingsExpanded(false);
-    setProfileExpanded(false);
-    updateProfileUi();
-    syncFontSourceUi();
-    updateReaderSettingsUi();
-    updateResponsiveChrome();
-    readerRoot.addEventListener("pointerdown", restoreFullscreenOnFirstTap, { capture: true, signal: eventSignal });
-    document.addEventListener("fullscreenchange", syncHeaderFullscreenUi, { signal: eventSignal });
-    syncHeaderFullscreenUi();
+    setReaderSettingsExpanded(panelContext, false);
+    setProfileExpanded(panelContext, false);
+    updateProfileUi(baseContext);
+    syncFontSourceUi(baseContext);
+    updateReaderSettingsUi(baseContext);
+    updateResponsiveChrome(baseContext);
+    const initialPreset = getChromePreset(window.innerWidth);
+    s.activeChromePreset = initialPreset;
+    applyChromeSettings(baseContext, getChromeSettingsForPreset(initialPreset));
+    const handleLayoutChange = () => {
+      const anchorCursor = s.pageStarts[s.pageIndex] ? { ...s.pageStarts[s.pageIndex] } : null;
+      s.lastCanvasW = s.lastCanvasH = -1;
+      render();
+      if (anchorCursor && s.pageStarts.length > 0) {
+        s.pageIndex = findPageIndexByCursor(s.pageStarts, anchorCursor);
+        render();
+      }
+    };
+    document.addEventListener("fullscreenchange", () => {
+      syncHeaderFullscreenUi(baseContext);
+      handleLayoutChange();
+    }, { signal: eventAc.signal });
+    document.addEventListener("visibilitychange", () => document.visibilityState === "visible" && handleLayoutChange(), { signal: eventAc.signal });
+    syncHeaderFullscreenUi(baseContext);
     render();
+    if (s.showFullscreenPrompt && !document.fullscreenElement) openFullscreenPrompt(panelContext);
     let resizeTimer = 0;
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(render, 150);
-    }, { signal: eventSignal });
+    }, { signal: eventAc.signal });
   }
   main();
 })();
